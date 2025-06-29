@@ -1,6 +1,12 @@
 import { MessageInterface } from "../Message.interface";
 
 const Dictionary: MessageInterface.TDictionary = {
+	SUBSCRIBE_PERIOD: {
+		RU: "Дней подписки:",
+	},
+	CHOICE_PAY_DAY: {
+		RU: "На сколько дней вы хотите оформить подписку?",
+	},
 	USER_ADDED: {
 		RU: "Пользователь добавлен",
 	},
@@ -11,10 +17,10 @@ const Dictionary: MessageInterface.TDictionary = {
 		RU: "пользователь не найден",
 	},
 	PAY_DISC: {
-		RU: "Оплата подписки",
+		RU: "Оплата подписки. Через пробел число дней",
 	},
 	TIME_LEFT: {
-		RU: "Времени осталось: ",
+		RU: "Времени осталось:",
 	},
 	SUBSCRIBE_COMPLETE: {
 		RU: "Подписка оформлена",

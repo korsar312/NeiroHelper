@@ -13,6 +13,7 @@ import { OrchestratorTelegramInterface } from "./OrchestratorTelegram.interface"
 import { TelegramInterface } from "../../Services/ServiceTelegram/Telegram.interface";
 import { MessageInterface } from "../../Services/ServiceMessage/Message.interface";
 import { AuthInterface } from "../../Services/ServiceAuth/Auth.interface";
+import { scriptGetChatId } from "./Utils/ScriptGetChatId";
 
 class OrchestratorTelegram extends OrchestratorBase {
 	private offset = 0;
@@ -62,10 +63,10 @@ class OrchestratorTelegram extends OrchestratorBase {
 	}
 
 	public async scriptDefinition(update: TelegramInterface.IUpdate) {
-		const id = update.message.chat.id;
+		const id = scriptGetChatId(update);
 
 		try {
-			const text = update.message.text || update.message.caption || "";
+			const text = update.message?.text || update.message?.caption || update.callback_query?.data || "";
 			let { command } = parseCommand(text);
 
 			const isAuth = this.module("Auth").invoke.isAuthUser(id, command);

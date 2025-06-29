@@ -4,16 +4,17 @@ import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.in
 import { ProjectInterface } from "../../../DI/Project.interface";
 import { parseCommand } from "../Utils/ScriptParse";
 import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
+import { scriptGetChatId } from "../Utils/ScriptGetChatId";
 
 @RegisterDirective(OrchestratorTelegramInterface.EDirective.DEL_AUTH)
 class DeleteAuth implements OrchestratorTelegramInterface.IClass {
 	public async invoke(modules: ProjectInterface.TDIService, data: TelegramInterface.IUpdate) {
 		try {
-			const userId = data.message.chat.id;
+			const userId = scriptGetChatId(data);
 			const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.USER_DELETED, MessageInterface.ELang.RU);
 			const wordUserNotFound = modules("Message").invoke.getWord(MessageInterface.EWord.USER_NOT_FOUND, MessageInterface.ELang.RU);
 
-			const text = parseCommand(data.message.text || "").text;
+			const text = parseCommand(data.message?.text || "").text;
 			const deleteId = Number(text);
 
 			if (isNaN(deleteId)) throw new Error(`Ошибка парсинга id`);

@@ -2,7 +2,7 @@ import { Readable } from "node:stream";
 
 export namespace TelegramInterface {
 	export interface IAdapter {
-		sendMessage(text: string, chat_id: number): Promise<ISend>;
+		sendMessage(text: string, chat_id: number, options?: IMessageOptions): Promise<ISend>;
 
 		editMessage(text: string, chat_id: number, message_id: number): Promise<ISend>;
 
@@ -15,7 +15,8 @@ export namespace TelegramInterface {
 
 	export interface IUpdate {
 		update_id: number;
-		message: ISend;
+		message?: ISend;
+		callback_query?: IRetry;
 	}
 
 	type TFrom = {
@@ -65,4 +66,21 @@ export namespace TelegramInterface {
 		document?: TDocument;
 		caption?: string;
 	}
+
+	export interface IRetry {
+		id: string;
+		from: TFrom;
+		message: ISend;
+		chat_instance: string;
+		data: string;
+	}
+
+	export interface IMessageOptions {
+		buttons: TButton[];
+	}
+
+	export type TButton = {
+		text: string;
+		click: string;
+	};
 }

@@ -4,13 +4,16 @@ import { MessageInterface } from "../../../Services/ServiceMessage/Message.inter
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
 import { parseCommand } from "../Utils/ScriptParse";
 import { ProjectInterface } from "../../../DI/Project.interface";
+import { scriptGetChatId } from "../Utils/ScriptGetChatId";
 
 @RegisterDirective(OrchestratorTelegramInterface.EDirective.LEARN)
 class Learn implements OrchestratorTelegramInterface.IClass {
 	public async invoke(modules: ProjectInterface.TDIService, data: TelegramInterface.IUpdate) {
 		try {
-			if (data.message.text) return await this.text(modules, parseCommand(data.message.text).text, data.message.chat.id);
-			if (data.message.document) return await this.file(modules, data.message.document, data.message.chat.id);
+			const chatId = scriptGetChatId(data);
+
+			if (data.message?.text) return await this.text(modules, parseCommand(data.message.text).text, chatId);
+			if (data.message?.document) return await this.file(modules, data.message.document, chatId);
 		} catch (e) {
 			throw new Error(`Ошибка сохранения \n== ${e}`);
 		}

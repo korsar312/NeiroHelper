@@ -1,6 +1,6 @@
 import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
 
-export function parseCommand(textParse: string): OrchestratorTelegramInterface.TDirectiveParse {
+export function parseCommand(textParse: string = ""): OrchestratorTelegramInterface.TDirectiveParse {
 	let command: string = OrchestratorTelegramInterface.EDirective.SAY;
 	let text = textParse;
 

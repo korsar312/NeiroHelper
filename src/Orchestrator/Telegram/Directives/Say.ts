@@ -4,13 +4,14 @@ import { MessageInterface } from "../../../Services/ServiceMessage/Message.inter
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
 import { parseCommand } from "../Utils/ScriptParse";
 import { ProjectInterface } from "../../../DI/Project.interface";
-import {Secret} from "../../../Config/Secret";
+import { Secret } from "../../../Config/Secret";
+import { scriptGetChatId } from "../Utils/ScriptGetChatId";
 
 @RegisterDirective(OrchestratorTelegramInterface.EDirective.SAY)
 class Say implements OrchestratorTelegramInterface.IClass {
 	public async invoke(modules: ProjectInterface.TDIService, data: TelegramInterface.IUpdate) {
 		try {
-			if (data.message.text) return await this.text(modules, parseCommand(data.message.text).text, data.message.chat.id);
+			if (data.message?.text) return await this.text(modules, parseCommand(data.message.text).text, scriptGetChatId(data));
 		} catch (e) {
 			throw new Error(`Ошибка ответа нейросети \n== ${e}`);
 		}

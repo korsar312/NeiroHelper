@@ -23,10 +23,10 @@ class InferenceImp implements InferenceInterface.IAdapter {
 			return prev;
 		}, [] as InferenceInterface.IDialog);
 
-		const systemPrompt = createInput("system", /*instructions*/ +"\n" + context);
+		const systemPrompt = createInput("system", instructions + "\n" + context);
 		const userPrompt = createInput("user", question);
 
-		console.log([systemPrompt, ...historyPrompt, userPrompt]);
+		console.log([...historyPrompt, userPrompt]);
 
 		return this.client?.responses.create({
 			model: "gpt-4.1-mini",

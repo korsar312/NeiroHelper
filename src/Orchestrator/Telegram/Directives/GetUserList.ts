@@ -3,11 +3,12 @@ import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
 import { ProjectInterface } from "../../../DI/Project.interface";
 import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
+import { scriptGetChatId } from "../Utils/ScriptGetChatId";
 
 @RegisterDirective(OrchestratorTelegramInterface.EDirective.GET_ALL_USER)
 class GetUserList implements OrchestratorTelegramInterface.IClass {
 	public async invoke(modules: ProjectInterface.TDIService, data: TelegramInterface.IUpdate) {
-		const userId = data.message.chat.id;
+		const userId = scriptGetChatId(data);
 		const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.USER_ADDED, MessageInterface.ELang.RU);
 
 		const userList = modules("Auth").invoke.getAllUser();

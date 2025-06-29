@@ -4,6 +4,8 @@ export namespace MessageInterface {
 	}
 
 	export enum EWord {
+		SUBSCRIBE_PERIOD = "SUBSCRIBE_PERIOD",
+		CHOICE_PAY_DAY = "CHOICE_PAY_DAY",
 		USER_ADDED = "USER_ADDED",
 		USER_DELETED = "USER_DELETED",
 		USER_NOT_FOUND = "USER_NOT_FOUND",
