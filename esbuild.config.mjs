@@ -1,17 +1,30 @@
 import {build} from "esbuild";
 import clean from "esbuild-plugin-clean";
+import copy from "esbuild-plugin-copy";
 
 const format = 'cjs'
 
 build({
     entryPoints: ["Start.ts"],
+
     bundle: true,
     platform: "node",
-    format: format,
     target: ["node20"],
-    outfile: `bot.${format}`,
-    sourcemap: false,
+
+    entryNames: 'bot',
+    format: format,
+    outExtension: { '.js': '.cjs' },
+    outdir: 'build',
+
+    loader: {
+        '.node': 'copy'
+    },
+
+    assetNames: '[name]',
+
     plugins: [
-        clean({patterns: [`/bot.${format}`]})
+        clean({patterns: [`build`]}),
+        copy({assets: [{ from: 'node_modules/better-sqlite3/build/Release/*.node', to: './' }]})
     ]
 }).catch(() => process.exit(1));
+
