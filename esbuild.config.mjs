@@ -1,5 +1,5 @@
 import path from 'path';
-import { fileURLToPath } from 'url';      // ← добавляем
+import { fileURLToPath } from 'url';
 import { build } from 'esbuild';
 import clean from 'esbuild-plugin-clean';
 import copy from 'esbuild-plugin-copy';
@@ -27,13 +27,6 @@ build({
 
     plugins: [
         clean({ patterns: ['build'] }),
-        copy({
-            assets: [
-                {
-                    from: 'node_modules/better-sqlite3/build/Release/*.node',
-                    to: './'
-                }
-            ]
-        })
+        copy({ assets: [{from: 'node_modules/better-sqlite3/build/Release/*.node', to: './'}] })
     ]
 }).catch(() => process.exit(1));
