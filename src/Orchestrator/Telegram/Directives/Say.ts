@@ -1,0 +1,45 @@
+import { RegisterDirective } from "../Utils/ScriptRegistry";
+import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
+import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
+import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
+import { parseCommand } from "../Utils/ScriptParse";
+import { ProjectInterface } from "../../../DI/Project.interface";
+
+@RegisterDirective(OrchestratorTelegramInterface.EDirective.SAY)
+class Say implements OrchestratorTelegramInterface.IClass {
+	public async invoke(modules: ProjectInterface.TDIService, data: TelegramInterface.IUpdate) {
+		try {
+			if (data.message.text) return await this.text(modules, parseCommand(data.message.text).text, data.message.chat.id);
+		} catch (e) {
+			throw new Error(`Ошибка ответа нейросети \n== ${e}`);
+		}
+	}
+
+	async text(modules: ProjectInterface.TDIService, text: string, chatId: number) {
+		const wordGetTo = modules("Message").invoke.getWord(MessageInterface.EWord.GET_TO_LLM, MessageInterface.ELang.RU);
+
+		const instruct = await modules("Files").invoke.getInstruction();
+		const message = await modules("Telegram").invoke.sendMessage(wordGetTo, chatId);
+		const history = await modules("History").invoke.getHistory(chatId, 10);
+		const generate = await modules("Inference").invoke.getPromt(text, instruct, "", history);
+
+		if (generate?.output_text === undefined) throw new Error(`Отсутствие поля ответа \n== ${generate}`);
+		const reply = generate.output_text;
+
+		await modules("History").invoke.setHistory(chatId, new Date().getTime(), text, reply);
+		await modules("Telegram").invoke.editMessage(reply, chatId, message.message_id);
+	}
+
+	async file(modules: ProjectInterface.TDIService, data: TelegramInterface.TDocument, chatId: number) {
+		const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.DOWNLOADING_FILE, MessageInterface.ELang.RU);
+
+		await modules("Telegram").invoke.sendMessage(wordFinish, chatId);
+		const file = await modules("Telegram").invoke.getFile(data.file_id);
+
+		const chunks: Buffer[] = [];
+		for await (const chunk of file) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+		const text = Buffer.concat(chunks).toString("utf-8");
+
+		await this.text(modules, text, chatId);
+	}
+}

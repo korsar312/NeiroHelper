@@ -1,0 +1,37 @@
+{
+  "name": "botforpidor",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "Start.ts",
+  "scripts": {
+    "start": "tsx Start.ts",
+    "build": "node esbuild.config.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/korsar312/BotForFriend.git"
+  },
+  "author": "korsar312",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/korsar312/BotForFriend/issues"
+  },
+  "homepage": "https://github.com/korsar312/BotForFriend#readme",
+  "description": "",
+  "dependencies": {
+    "@api/tron": "file:.api/apis/tron",
+    "better-sqlite3": "^12.1.1",
+    "dotenv": "^16.5.0",
+    "openai": "^5.7.0",
+    "tronweb": "^6.0.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.15.33",
+    "esbuild": "^0.25.4",
+    "esbuild-plugin-clean": "^1.0.1",
+    "prettier": "3.3.3",
+    "tsx": "^4.19.1",
+    "typescript": "^5.8.3"
+  }
+}
