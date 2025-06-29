@@ -36,8 +36,8 @@ class AuthImp implements AuthInterface.IAdapter {
 		const isAdmin = userRole === AuthInterface.EGrade.ADMIN;
 		const isSuper = userRole === AuthInterface.EGrade.SUPER;
 
-		if (isUser) return subscriptWorks || userAccess.includes(command);
-		if (isAdmin) return subscriptWorks || adminAccess.includes(command);
+		if (isUser) return subscriptWorks && userAccess.includes(command);
+		if (isAdmin) return subscriptWorks && adminAccess.includes(command);
 		if (isSuper) return true;
 
 		return false;

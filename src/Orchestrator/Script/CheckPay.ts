@@ -23,7 +23,10 @@ async function CheckPay(modules: ProjectInterface.TDIService, address: string, s
 
 		while (true) {
 			const isExist = await modules("Payment").invoke.isExistTransaction(address, timestamp, sum);
-			if (isExist) resolve(true);
+			if (isExist) {
+				clearInterval(tick);
+				resolve(true);
+			}
 
 			await new Promise((res) => setTimeout(res, 10000));
 		}

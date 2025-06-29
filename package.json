@@ -1,5 +1,5 @@
 {
-  "name": "botforpidor",
+  "name": "neirohelper",
   "type": "module",
   "version": "1.0.0",
   "main": "Start.ts",
@@ -9,17 +9,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/korsar312/BotForFriend.git"
+    "url": "git+https://github.com/korsar312/NeiroHelper.git"
   },
   "author": "korsar312",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/korsar312/BotForFriend/issues"
+    "url": "https://github.com/korsar312/NeiroHelper/issues"
   },
-  "homepage": "https://github.com/korsar312/BotForFriend#readme",
+  "homepage": "https://github.com/korsar312/NeiroHelper#readme",
   "description": "",
   "dependencies": {
-    "@api/tron": "file:.api/apis/tron",
     "better-sqlite3": "^12.1.1",
     "dotenv": "^16.5.0",
     "openai": "^5.7.0",

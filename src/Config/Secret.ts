@@ -12,4 +12,5 @@ export const Secret = {
 	fullHost: "https://api.trongrid.io",
 	usdtContract: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
 	payToDay: process.env.PAY_TO_DAY || 100,
+	historyQty: 20,
 };
