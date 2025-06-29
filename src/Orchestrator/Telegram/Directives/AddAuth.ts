@@ -14,14 +14,18 @@ class AddAuth implements OrchestratorTelegramInterface.IClass {
 		const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.USER_ADDED, MessageInterface.ELang.RU);
 
 		const text = parseCommand(data.message?.text || "").text;
-		const [addedId, date] = text.split(" ");
+		const [addedId, hours] = text.split(" ");
 
 		const addUserValid = Number(addedId);
 
 		if (isNaN(addUserValid)) throw new Error(`Ошибка парсинга id`);
-		if (isNaN(+(date || ""))) throw new Error(`Ошибка парсинга даты`);
+		if (isNaN(+(hours || ""))) throw new Error(`Ошибка парсинга даты`);
 
-		modules("Auth").invoke.setUserGrade(addUserValid, AuthInterface.EGrade.GOY, date);
+		const now = new Date();
+		now.setHours(now.getHours() + +hours);
+		const newDate = String(now.getTime());
+
+		modules("Auth").invoke.setUserGrade(addUserValid, AuthInterface.EGrade.GOY, newDate);
 		modules("Telegram").invoke.sendMessage(wordFinish, userId);
 	}
 }

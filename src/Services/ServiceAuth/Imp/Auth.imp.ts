@@ -2,16 +2,11 @@ import { AuthInterface } from "../Auth.interface";
 import { ProjectInterface } from "../../../DI/Project.interface";
 import { OrchestratorTelegramInterface } from "../../../Orchestrator/Telegram/OrchestratorTelegram.interface";
 
-const userAccess = [
-	OrchestratorTelegramInterface.EDirective.CLEAR,
-	OrchestratorTelegramInterface.EDirective.NO_AUTH,
-	OrchestratorTelegramInterface.EDirective.SAY,
-	OrchestratorTelegramInterface.EDirective.PAY,
-];
+const allAccess = [OrchestratorTelegramInterface.EDirective.NO_AUTH, OrchestratorTelegramInterface.EDirective.PAY];
+const userAccess = [...allAccess, OrchestratorTelegramInterface.EDirective.CLEAR, OrchestratorTelegramInterface.EDirective.SAY];
 
 const adminAccess = [
 	...userAccess,
-	OrchestratorTelegramInterface.EDirective.NO_AUTH,
 	OrchestratorTelegramInterface.EDirective.LEARN,
 	OrchestratorTelegramInterface.EDirective.GET_ALL_USER,
 	OrchestratorTelegramInterface.EDirective.DEL_AUTH,
@@ -32,11 +27,17 @@ class AuthImp implements AuthInterface.IAdapter {
 		const subscriptWorks = dateNowMs < userTimeMs;
 
 		const userRole = user?.role as AuthInterface.EGrade;
-		const isUser = userRole === AuthInterface.EGrade.GOY || undefined;
+
+		const isUser = userRole === AuthInterface.EGrade.GOY || userRole === undefined;
 		const isAdmin = userRole === AuthInterface.EGrade.ADMIN;
 		const isSuper = userRole === AuthInterface.EGrade.SUPER;
 
-		if (isUser) return subscriptWorks && userAccess.includes(command);
+		console.log(new Date(userTimeMs));
+		console.log(userRole);
+
+		///
+
+		if (isUser) return subscriptWorks ? userAccess.includes(command) : allAccess.includes(command);
 		if (isAdmin) return subscriptWorks && adminAccess.includes(command);
 		if (isSuper) return true;
 
