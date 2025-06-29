@@ -55,7 +55,7 @@ class AuthImp implements AuthInterface.IAdapter {
 		const user = this.Infrastructure("DB").invoke.read.grade(userId);
 		const userRole = user?.role as AuthInterface.EGrade;
 
-		if (userRole === AuthInterface.EGrade.SUPER) throw new Error(`Пользователя не удалить по причине пошел на хуй`);
+		if (userRole === AuthInterface.EGrade.SUPER) throw new Error(`Невозможно удалить Super пользователя`);
 		this.Infrastructure("DB").invoke.delete.grade(userId);
 	}
 }
