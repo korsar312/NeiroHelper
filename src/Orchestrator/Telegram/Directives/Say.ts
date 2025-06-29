@@ -13,7 +13,7 @@ class Say implements OrchestratorTelegramInterface.IClass {
 		try {
 			if (data.message?.text) return await this.text(modules, parseCommand(data.message.text).text, scriptGetChatId(data));
 		} catch (e) {
-			throw new Error(`Ошибка ответа нейросети \n== ${e}`);
+			throw new Error(`Ошибка ответа нейросети`); //\n== ${e}
 		}
 	}
 

@@ -10,6 +10,7 @@ const adminAccess = [
 	OrchestratorTelegramInterface.EDirective.LEARN,
 	OrchestratorTelegramInterface.EDirective.GET_ALL_USER,
 	OrchestratorTelegramInterface.EDirective.DEL_AUTH,
+	OrchestratorTelegramInterface.EDirective.ADD_AUTH,
 ];
 
 class AuthImp implements AuthInterface.IAdapter {
@@ -34,8 +35,6 @@ class AuthImp implements AuthInterface.IAdapter {
 
 		console.log(new Date(userTimeMs));
 		console.log(userRole);
-
-		///
 
 		if (isUser) return subscriptWorks ? userAccess.includes(command) : allAccess.includes(command);
 		if (isAdmin) return subscriptWorks && adminAccess.includes(command);
