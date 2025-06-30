@@ -12,7 +12,6 @@ class PaymentImp implements PaymentInterface.IAdapter {
 		this.params = params;
 	}
 
-	//Сделано ===============================
 	async createPayAddress() {
 		try {
 			const tronWeb = this.createTron();
@@ -28,7 +27,6 @@ class PaymentImp implements PaymentInterface.IAdapter {
 		}
 	}
 
-	//Сделано ===============================
 	async checkBalanceUsdt(address: string) {
 		try {
 			const tronWeb = this.createTron();
@@ -39,7 +37,7 @@ class PaymentImp implements PaymentInterface.IAdapter {
 
 			let usdt = Number(result.toString());
 
-			if (address === Secret.addressWalletWork) usdt *= 0.85;
+			if (address === Secret.addressWalletWork) usdt *= 0.75;
 
 			return usdt;
 		} catch (e) {
@@ -56,7 +54,6 @@ class PaymentImp implements PaymentInterface.IAdapter {
 
 			const minTime = Number(min_timestamp);
 
-			// фильтрация
 			const match = result.data.find((tx: any) => {
 				const sumTrans = (parseInt(tx.value) / 1000000).toFixed(2);
 				const isToAddress = tx.to === address;
@@ -73,7 +70,6 @@ class PaymentImp implements PaymentInterface.IAdapter {
 		}
 	}
 
-	//Сделано ===============================
 	async checkBalanceTrx(address: string) {
 		try {
 			const tronWeb = this.createTron();
