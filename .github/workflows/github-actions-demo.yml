@@ -1,10 +1,15 @@
 name: CI/CD
 
-on: [push, pull_request]
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
 
 jobs:
   build:
-    runs-on: ubuntu-latest    # Ubuntu 22.04 с glibc 2.35
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -14,25 +19,15 @@ jobs:
         with:
           node-version: '20'
 
-      # 1) Устанавливаем dev-зависимости для сборки C++
-      - name: Install build deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential python3 libsqlite3-dev
-
-      # 2) Чистая, детерминированная установка JS-зависимостей
       - name: Install dependencies
         run: npm ci
 
-      # 3) Пересборка better-sqlite3 прямо в этой среде (glibc 2.35)
-      - name: Rebuild better-sqlite3 from source (verbose)
-        run: npm rebuild better-sqlite3 --build-from-source --verbose
+      - name: Rebuild better-sqlite3 from source
+        run: npm rebuild better-sqlite3 --build-from-source
 
-      # 4) Пакуем код и (новый) .node в один бандл
       - name: Build bundle with ncc
         run: npx ncc build src/index.ts -m -o dist
 
-      # 5) Сохраняем артефакт для деплоя или дальнейшей проверки
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
