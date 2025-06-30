@@ -2,7 +2,11 @@ import { AuthInterface } from "../Auth.interface";
 import { ProjectInterface } from "../../../DI/Project.interface";
 import { OrchestratorTelegramInterface } from "../../../Orchestrator/Telegram/OrchestratorTelegram.interface";
 
-const allAccess = [OrchestratorTelegramInterface.EDirective.NO_AUTH, OrchestratorTelegramInterface.EDirective.PAY];
+const allAccess = [
+	OrchestratorTelegramInterface.EDirective.NO_AUTH,
+	OrchestratorTelegramInterface.EDirective.GET_BALANCE,
+	OrchestratorTelegramInterface.EDirective.PAY,
+];
 const userAccess = [...allAccess, OrchestratorTelegramInterface.EDirective.CLEAR, OrchestratorTelegramInterface.EDirective.SAY];
 
 const adminAccess = [

@@ -6,6 +6,7 @@ import "./Directives/Pay";
 import "./Directives/DeleteAuth";
 import "./Directives/AddAuth";
 import "./Directives/GetUserList";
+import "./Directives/GetBalance";
 import { parseCommand } from "./Utils/ScriptParse";
 import { getDirective } from "./Utils/ScriptRegistry";
 import OrchestratorBase from "../OrchestratorBase";
@@ -26,17 +27,19 @@ class OrchestratorTelegram extends OrchestratorBase {
 
 	public async init() {
 		try {
-			const { CLEAR, PAY } = OrchestratorTelegramInterface.EDirective;
+			const { CLEAR, PAY, GET_BALANCE } = OrchestratorTelegramInterface.EDirective;
 
 			this.module("Auth").invoke.setUserGrade(410821090, AuthInterface.EGrade.SUPER);
 			this.module("Auth").invoke.setUserGrade(995717149, AuthInterface.EGrade.ADMIN, "2751189346824");
 
 			const payDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.PAY_DISC, MessageInterface.ELang.RU);
 			const clearDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.CLEAR_DISC, MessageInterface.ELang.RU);
+			const balanceDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.BALANCE_DISC, MessageInterface.ELang.RU);
 
 			await this.module("Telegram").invoke.setCommand([
 				{ command: PAY, description: payDisc },
 				{ command: CLEAR, description: clearDisc },
+				{ command: GET_BALANCE, description: balanceDisc },
 			]);
 		} catch (e) {
 			console.log(`Ошибка инициализации \n== ${e}`);

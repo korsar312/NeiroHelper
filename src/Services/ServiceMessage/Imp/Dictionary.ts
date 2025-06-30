@@ -1,6 +1,9 @@
 import { MessageInterface } from "../Message.interface";
 
 const Dictionary: MessageInterface.TDictionary = {
+	USDT: {
+		RU: "USDT:",
+	},
 	SUBSCRIBE_PERIOD: {
 		RU: "Дней подписки:",
 	},
@@ -15,6 +18,9 @@ const Dictionary: MessageInterface.TDictionary = {
 	},
 	USER_NOT_FOUND: {
 		RU: "пользователь не найден",
+	},
+	BALANCE_DISC: {
+		RU: "Узнать балланс USDT. Через пробел адрес кошелька",
 	},
 	PAY_DISC: {
 		RU: "Оплата подписки. Через пробел число дней",

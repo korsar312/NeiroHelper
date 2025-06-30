@@ -1,6 +1,7 @@
 import { PaymentInterface } from "../Payment.interface";
 import { ProjectInterface } from "../../../DI/Project.interface";
 import { TronWeb } from "tronweb";
+import { Secret } from "../../../Config/Secret";
 
 class PaymentImp implements PaymentInterface.IAdapter {
 	protected Infrastructure: ProjectInterface.TDIInfrastructure;
@@ -36,7 +37,11 @@ class PaymentImp implements PaymentInterface.IAdapter {
 			const contract = await tronWeb.contract().at(this.params.USDT_CONTRACT);
 			const result = await contract.balanceOf(address).call();
 
-			return Number(result.toString());
+			let usdt = Number(result.toString());
+
+			if (address === Secret.addressWalletWork) usdt *= 0.85;
+
+			return usdt;
 		} catch (e) {
 			throw new Error(`Ошибка при получении USDT-баланса \n== ${e}`);
 		}
