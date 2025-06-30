@@ -24,21 +24,25 @@ class ConnectHTTP extends ConnectBase {
 	}
 
 	private createLink(param: ConnectInterface.TLink, isSecret?: boolean): string {
-		const { type, link, addLink, query } = param;
+		try {
+			const { type, link, addLink, query } = param;
 
-		const url = new URL(this.link, undefined);
-		const add: string[] = [];
+			const url = new URL(this.link, undefined);
+			const add: string[] = [];
 
-		if (type) add.push(type);
-		if (!isSecret) add.push(`bot${this.token}`);
-		if (link) add.push(link);
-		if (addLink) add.push(addLink);
+			if (type) add.push(type);
+			if (!isSecret) add.push(`bot${this.token}`);
+			if (link) add.push(link);
+			if (addLink) add.push(addLink);
 
-		url.pathname += add.join("/");
+			url.pathname += add.join("/");
 
-		if (query) Object.entries(query).forEach(([key, value]) => url.searchParams.append(key, String(value)));
+			if (query) Object.entries(query).forEach(([key, value]) => url.searchParams.append(key, String(value)));
 
-		return url.toString();
+			return url.toString();
+		} catch (e) {
+			throw new Error(`Ошибка создания ссылки \n== ${e}`);
+		}
 	}
 
 	request<T>(param: ConnectInterface.TRequest): Promise<T> {
@@ -58,7 +62,7 @@ class ConnectHTTP extends ConnectBase {
 					resolve(response.result);
 				})
 				.catch((e) => {
-					reject(new Error(`Ошибка в запросе ${this.createLink(param, true)} \n== ${e}`));
+					reject(new Error(`Ошибка в запроса ${param.link} \n== ${e}`));
 				});
 		});
 	}

@@ -10,3 +10,5 @@ export function start() {
 	orchestrator.use(OrchestratorTelegram);
 	orchestrator.start();
 }
+
+start();

@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "main": "Start.ts",
   "scripts": {
-    "start": "tsx Start.ts",
-    "build": "node esbuild.config.mjs"
+    "start": "tsx src/index.ts",
+    "build": "tsx build.ts"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   "description": "",
   "dependencies": {
     "better-sqlite3": "^12.1.1",
+    "better-sqlite3-helper": "^3.1.7",
     "dotenv": "^16.5.0",
     "openai": "^5.7.0",
     "tronweb": "^6.0.3"
@@ -27,9 +28,7 @@
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.15.33",
-    "esbuild": "^0.25.4",
-    "esbuild-plugin-clean": "^1.0.1",
-    "esbuild-plugin-copy": "^2.1.1",
+    "@vercel/ncc": "^0.38.3",
     "prettier": "3.3.3",
     "tsx": "^4.19.1",
     "typescript": "^5.8.3"
