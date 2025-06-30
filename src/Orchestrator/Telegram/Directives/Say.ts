@@ -29,20 +29,9 @@ class Say implements OrchestratorTelegramInterface.IClass {
 		if (generate?.output_text === undefined) throw new Error(`Отсутствие поля ответа \n== ${generate}`);
 		const reply = generate.output_text;
 
+		console.log(text + "\n", reply);
+
 		await modules("History").invoke.setHistory(chatId, new Date().getTime(), text, reply);
 		await modules("Telegram").invoke.editMessage(reply, chatId, message.message_id);
-	}
-
-	async file(modules: ProjectInterface.TDIService, data: TelegramInterface.TDocument, chatId: number) {
-		const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.DOWNLOADING_FILE, MessageInterface.ELang.RU);
-
-		await modules("Telegram").invoke.sendMessage(wordFinish, chatId);
-		const file = await modules("Telegram").invoke.getFile(data.file_id);
-
-		const chunks: Buffer[] = [];
-		for await (const chunk of file) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-		const text = Buffer.concat(chunks).toString("utf-8");
-
-		await this.text(modules, text, chatId);
 	}
 }

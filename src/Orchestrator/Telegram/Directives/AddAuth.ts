@@ -26,6 +26,8 @@ class AddAuth implements OrchestratorTelegramInterface.IClass {
 		const newDate = String(now.getTime());
 
 		modules("Auth").invoke.setUserGrade(addUserValid, AuthInterface.EGrade.GOY, newDate);
-		modules("Telegram").invoke.sendMessage(wordFinish, userId);
+		modules("Telegram")
+			.invoke.sendMessage(wordFinish, userId)
+			.catch(() => {});
 	}
 }

@@ -27,21 +27,4 @@ export namespace PaymentInterface {
 		publicKey: string;
 		address: string;
 	}
-
-	export interface ITransaction {
-		transaction_id: string;
-		token_info: TToken_info;
-		block_timestamp: number;
-		from: string;
-		to: string;
-		type: "Transfer";
-		value: string;
-	}
-
-	type TToken_info = {
-		symbol: "USDT";
-		address: string;
-		decimals: number;
-		name: "Tether USD";
-	};
 }

@@ -23,7 +23,9 @@ class DeleteAuth implements OrchestratorTelegramInterface.IClass {
 			if (!isUserExist) throw new Error(wordUserNotFound);
 
 			modules("Auth").invoke.removeUser(deleteId);
-			modules("Telegram").invoke.sendMessage(wordFinish, userId);
+			modules("Telegram")
+				.invoke.sendMessage(wordFinish, userId)
+				.catch(() => {});
 		} catch (e) {
 			throw new Error(`Ошибка удаления пользователя \n== ${e}`);
 		}

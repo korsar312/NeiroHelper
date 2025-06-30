@@ -45,25 +45,21 @@ class ConnectHTTP extends ConnectBase {
 		}
 	}
 
-	request<T>(param: ConnectInterface.TRequest): Promise<T> {
-		const { method, data } = param;
+	async request<T>(param: ConnectInterface.TRequest): Promise<T> {
+		return new Promise(async (resolve, reject) => {
+			const { method, data } = param;
 
-		const fullLink = this.createLink(param);
+			const fullLink = this.createLink(param);
 
-		return new Promise((resolve, reject) => {
 			const body = method !== ConnectInterface.EMethod.GET ? JSON.stringify(data) : undefined;
 			const headers = { "Content-Type": "application/json" };
 
-			fetch(fullLink, { headers, body, method })
-				.then(async (res) => {
-					const response: ConnectInterface.TRes<T> = await this.parse(res);
+			const res = await fetch(fullLink, { headers, body, method });
+			const response: ConnectInterface.TRes<T> = await this.parse(res);
 
-					if (!response.ok) throw new Error(`Запрос отвелил response.ok: ${response.ok}`);
-					resolve(response.result);
-				})
-				.catch((e) => {
-					reject(new Error(`Ошибка в запроса ${param.link} \n== ${e}`));
-				});
+			if (!response.ok) reject(`Запрос ${param.link} отвелил response.ok: ${response.ok}`);
+
+			resolve(response.result);
 		});
 	}
 }

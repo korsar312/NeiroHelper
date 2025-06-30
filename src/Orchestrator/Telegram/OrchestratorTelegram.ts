@@ -24,19 +24,23 @@ class OrchestratorTelegram extends OrchestratorBase {
 		this.polling();
 	}
 
-	public init() {
-		const { CLEAR, PAY } = OrchestratorTelegramInterface.EDirective;
+	public async init() {
+		try {
+			const { CLEAR, PAY } = OrchestratorTelegramInterface.EDirective;
 
-		this.module("Auth").invoke.setUserGrade(410821090, AuthInterface.EGrade.SUPER);
-		this.module("Auth").invoke.setUserGrade(995717149, AuthInterface.EGrade.ADMIN, "2751189346824");
+			this.module("Auth").invoke.setUserGrade(410821090, AuthInterface.EGrade.SUPER);
+			this.module("Auth").invoke.setUserGrade(995717149, AuthInterface.EGrade.ADMIN, "2751189346824");
 
-		const payDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.PAY_DISC, MessageInterface.ELang.RU);
-		const clearDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.CLEAR_DISC, MessageInterface.ELang.RU);
+			const payDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.PAY_DISC, MessageInterface.ELang.RU);
+			const clearDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.CLEAR_DISC, MessageInterface.ELang.RU);
 
-		return this.module("Telegram").invoke.setCommand([
-			{ command: PAY, description: payDisc },
-			{ command: CLEAR, description: clearDisc },
-		]);
+			await this.module("Telegram").invoke.setCommand([
+				{ command: PAY, description: payDisc },
+				{ command: CLEAR, description: clearDisc },
+			]);
+		} catch (e) {
+			console.log(`Ошибка инициализации \n== ${e}`);
+		}
 	}
 
 	public async polling() {
@@ -56,9 +60,8 @@ class OrchestratorTelegram extends OrchestratorBase {
 
 		if (updates.length !== 0) {
 			this.offset = updates[updates.length - 1].update_id + 1;
-			for (const update of updates) {
-				this.scriptDefinition(update);
-			}
+
+			for (const update of updates) this.scriptDefinition(update);
 		}
 	}
 
@@ -77,7 +80,8 @@ class OrchestratorTelegram extends OrchestratorBase {
 
 			await directive.invoke(this.module, update);
 		} catch (e) {
-			this.module("Telegram").invoke.sendMessage(`Ошибка \n== ${e}`, id);
+			console.log(`Ошибка \n== ${e}`);
+			this.module("Telegram").invoke.sendMessage(`Ошибка \n== ${e}`, id).catch();
 		}
 	}
 }

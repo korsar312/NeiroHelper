@@ -26,8 +26,6 @@ class InferenceImp implements InferenceInterface.IAdapter {
 		const systemPrompt = createInput("system", instructions + "\n" + context);
 		const userPrompt = createInput("user", question);
 
-		console.log([...historyPrompt, userPrompt]);
-
 		return this.client?.responses.create({
 			model: "gpt-4.1-mini",
 			input: [systemPrompt, ...historyPrompt, userPrompt],

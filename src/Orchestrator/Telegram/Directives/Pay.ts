@@ -29,22 +29,25 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 		}
 	}
 
-	getUniqSum(dollarQty: number): Promise<string> {
-		return new Promise(async (resolve) => {
+	async getUniqSum(dollarQty: number): Promise<string> {
+		try {
 			while (true) {
 				const uniq = String(Math.floor(Math.random() * 99 + 1)).padStart(2, "0");
 				const cent = uniq.padEnd(6, "0");
+				const fullPrice = dollarQty + cent;
+				const formatFullPrice = formatMicroUsdt(fullPrice);
 
-				const fullPrise = dollarQty + cent;
-				const formatFullPrise = formatMicroUsdt(fullPrise);
+				const isTaken = Array.from(userPayList.values()).some((el) => el === formatFullPrice);
 
-				const hasValue = Array.from(userPayList.values()).some((el) => el === formatFullPrise);
+				if (!isTaken) {
+					return formatFullPrice;
+				}
 
-				if (!hasValue) resolve(formatFullPrise);
-
-				await new Promise((res) => setTimeout(res, 100));
+				await delay(100);
 			}
-		});
+		} catch (e) {
+			throw new Error(`Ошибка уникального номера оплаты \n== ${e}`);
+		}
 	}
 
 	async payChoice(modules: ProjectInterface.TDIService, chatId: number) {
@@ -94,7 +97,9 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			userPayList.delete(chatId);
 
 			function lastMinute(num: number) {
-				modules("Telegram").invoke.editMessage(`${wordContract} ${num}`, chatId, messageTimeLeft.message_id);
+				modules("Telegram")
+					.invoke.editMessage(`${wordContract} ${num}`, chatId, messageTimeLeft.message_id)
+					.catch(() => {});
 			}
 		} catch (e) {
 			userPayList.delete(chatId);
@@ -105,4 +110,8 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 
 function formatMicroUsdt(v: string) {
 	return (parseInt(v) / 1000000).toFixed(2);
+}
+
+function delay(ms: number): Promise<void> {
+	return new Promise((res) => setTimeout(res, ms));
 }

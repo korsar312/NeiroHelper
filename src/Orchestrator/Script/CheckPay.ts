@@ -5,32 +5,36 @@ async function CheckPay(modules: ProjectInterface.TDIService, address: string, s
 	let count = 0;
 	const maxCount = 500;
 
-	const timestamp = String(new Date().getTime());
+	try {
+		const timestamp = String(new Date().getTime());
 
-	return new Promise(async (resolve, reject) => {
-		callback?.(maxCount);
+		return new Promise(async (resolve, reject) => {
+			callback?.(maxCount);
 
-		const tick = setInterval(() => {
-			++count;
+			const tick = setInterval(() => {
+				++count;
 
-			if (count > maxCount) {
-				clearInterval(tick);
-				reject("Время оплаты истекло");
+				if (count > maxCount) {
+					clearInterval(tick);
+					reject("Время оплаты истекло");
+				}
+
+				count % 5 === 0 && callback?.(maxCount - count);
+			}, 1000);
+
+			while (true) {
+				const isExist = await modules("Payment").invoke.isExistTransaction(address, timestamp, sum);
+				if (isExist) {
+					clearInterval(tick);
+					resolve(true);
+				}
+
+				await new Promise((res) => setTimeout(res, 10000));
 			}
-
-			count % 5 === 0 && callback?.(maxCount - count);
-		}, 1000);
-
-		while (true) {
-			const isExist = await modules("Payment").invoke.isExistTransaction(address, timestamp, sum);
-			if (isExist) {
-				clearInterval(tick);
-				resolve(true);
-			}
-
-			await new Promise((res) => setTimeout(res, 10000));
-		}
-	});
+		});
+	} catch (e) {
+		throw new Error(`Ошибка отсчета оплаты \n== ${e}`);
+	}
 }
 
 export default CheckPay;
