@@ -1,7 +1,5 @@
-# .github/workflows/ci.yml
 name: CI/CD
 
-# Триггеры: пуш или PR в любую ветку
 on:
   push:
     branches: ['**']
@@ -10,7 +8,6 @@ on:
 
 jobs:
   build:
-    # У нас нужен именно Linux, чтобы нативный .node был в формате ELF
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'       # или версия вашего Node
+          node-version: '20'
 
       - name: Install dependencies
         run: npm ci
@@ -32,7 +29,7 @@ jobs:
         run: npx ncc build src/index.ts -m -o dist
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist
-          path: dist
+          path: dist/
