@@ -22,7 +22,7 @@ class OrchestratorTelegram extends OrchestratorBase {
 
 	async invoke() {
 		await this.init();
-		this.polling();
+		this.polling().catch(() => {});
 	}
 
 	public async init() {
@@ -59,12 +59,16 @@ class OrchestratorTelegram extends OrchestratorBase {
 	}
 
 	public async updateHandler() {
-		const updates = await this.module("Telegram").invoke.getMessage(this.offset);
+		try {
+			const updates = await this.module("Telegram").invoke.getMessage(this.offset);
 
-		if (updates.length !== 0) {
-			this.offset = updates[updates.length - 1].update_id + 1;
+			if (updates.length !== 0) {
+				this.offset = updates[updates.length - 1].update_id + 1;
 
-			for (const update of updates) this.scriptDefinition(update);
+				for (const update of updates) this.scriptDefinition(update).catch(() => {});
+			}
+		} catch (e) {
+			console.error(`Ошибка в обновления сообщений ТГ: \n== ${e}`);
 		}
 	}
 
@@ -84,7 +88,9 @@ class OrchestratorTelegram extends OrchestratorBase {
 			await directive.invoke(this.module, update);
 		} catch (e) {
 			console.log(`Ошибка \n== ${e}`);
-			this.module("Telegram").invoke.sendMessage(`Ошибка \n== ${e}`, id).catch();
+			this.module("Telegram")
+				.invoke.sendMessage(`Ошибка \n== ${e}`, id)
+				.catch(() => {});
 		}
 	}
 }

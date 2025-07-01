@@ -5,6 +5,7 @@
   "main": "Start.ts",
   "scripts": {
     "start": "tsx src/index.ts",
+    "test": "tsx src/Test/di.test.ts",
     "build": "tsx build.ts"
   },
   "repository": {

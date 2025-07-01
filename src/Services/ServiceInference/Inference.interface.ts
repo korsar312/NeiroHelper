@@ -5,7 +5,7 @@ export namespace InferenceInterface {
 		getPromt(question: string, instructions: string, context: string, history: THistoryField[]): Promise<IGenerate | undefined>;
 	}
 
-	interface IGenerate extends OpenAI.Responses.Response {}
+	export interface IGenerate extends OpenAI.Responses.Response {}
 
 	export type THistoryField = {
 		question: string;

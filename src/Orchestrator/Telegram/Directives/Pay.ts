@@ -97,9 +97,11 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			userPayList.delete(chatId);
 
 			function lastMinute(num: number) {
-				modules("Telegram")
-					.invoke.editMessage(`${wordContract} ${num}`, chatId, messageTimeLeft.message_id)
-					.catch(() => {});
+				try {
+					modules("Telegram")
+						.invoke.editMessage(`${wordContract} ${num}`, chatId, messageTimeLeft.message_id)
+						.catch(() => {});
+				} catch (e) {}
 			}
 		} catch (e) {
 			userPayList.delete(chatId);
