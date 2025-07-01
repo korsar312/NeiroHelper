@@ -37,6 +37,10 @@ function main(): void {
 			console.log("ℹ️  public/ not found — skipping");
 		}
 
+		// 3) Упаковываем весь dist/ (+ .env) в один исполняемый файл через pkg
+		console.log("📦  Packaging into single executable with pkg …");
+		execSync("npx pkg dist/index.js --out-path dist --targets node22-linux-x64", { stdio: "inherit" });
+
 		console.log("🎉  Build complete!");
 	} catch (err) {
 		console.error("❌  Build failed:", err);

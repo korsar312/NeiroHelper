@@ -30,8 +30,23 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.15.33",
     "@vercel/ncc": "^0.38.3",
+    "pkg": "^5.8.1",
     "prettier": "3.3.3",
     "tsx": "^4.19.1",
     "typescript": "^5.8.3"
+  },
+  "pkg": {
+    "scripts": [
+      "dist/**/*.js",
+      "dist/**/*.cjs",
+      "dist/**/*.mjs",
+      "dist/**/*.map"
+    ],
+    "assets": [
+      "dist/.env"
+    ],
+    "targets": [
+      "node22-linux-x64"
+    ]
   }
 }
