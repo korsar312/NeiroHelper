@@ -23,7 +23,10 @@ async function CheckPay(modules: ProjectInterface.TDIService, address: string, s
 			}, 1000);
 
 			while (true) {
-				const isExist = await modules("Payment").invoke.isExistTransaction(address, timestamp, sum);
+				const isExist = await modules("Payment")
+					.invoke.isExistTransaction(address, timestamp, sum)
+					.catch(() => {});
+
 				if (isExist) {
 					clearInterval(tick);
 					resolve(true);
@@ -33,7 +36,7 @@ async function CheckPay(modules: ProjectInterface.TDIService, address: string, s
 			}
 		});
 	} catch (e) {
-		throw new Error(`Ошибка отсчета оплаты \n== ${e}`);
+		throw new Error(`Ошибка оплаты \n== ${e}`);
 	}
 }
 
