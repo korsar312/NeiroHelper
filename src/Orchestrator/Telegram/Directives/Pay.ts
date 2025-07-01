@@ -21,9 +21,11 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			if (userPayList.has(userId)) return;
 
 			const text = parseCommand(data.message?.text || data.callback_query?.data).text;
+			const messageId = data.callback_query?.message.message_id;
+
 			const day = isNaN(+text) ? 10 : +text;
 
-			if (text) return await this.offer(modules, day, userId);
+			if (text) return await this.offer(modules, day, userId, messageId);
 			if (!text) return await this.payChoice(modules, userId);
 		} catch (e) {
 			throw new Error(`Ошибка оплаты \n== ${e}`);
@@ -68,7 +70,7 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 		}
 	}
 
-	async offer(modules: ProjectInterface.TDIService, numberDay: number | string, chatId: number) {
+	async offer(modules: ProjectInterface.TDIService, numberDay: number | string, chatId: number, messageId?: number) {
 		try {
 			const day = Math.round(Number(numberDay));
 
@@ -89,7 +91,10 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			userPayList.set(chatId, formatFullPrise);
 
 			const wordContract = `${wordInstruction}\n\n${wordAddress}\n${address}\n\n${wordSum}\n${formatFullPrise}\n\n${SubPeriod}\n${day}\n\n${wordMinute}`;
-			const messageTimeLeft = await modules("Telegram").invoke.sendMessage(wordContract, chatId);
+
+			const messageTimeLeft = messageId
+				? await modules("Telegram").invoke.editMessage(wordContract, chatId, messageId)
+				: await modules("Telegram").invoke.sendMessage(wordContract, chatId);
 
 			await CheckPay(modules, address, formatFullPrise, lastMinute);
 
