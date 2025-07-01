@@ -3,12 +3,10 @@ import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
 import { ProjectInterface } from "../../../DI/Project.interface";
 import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
-import { AuthInterface } from "../../../Services/ServiceAuth/Auth.interface";
 import { Secret } from "../../../Config/Secret";
 import CheckPay from "../../Script/CheckPay";
 import { parseCommand } from "../Utils/ScriptParse";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
-import { throws } from "node:assert";
 
 const userPayList: Map<number, string> = new Map();
 
