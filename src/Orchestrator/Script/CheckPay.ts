@@ -19,7 +19,7 @@ async function CheckPay(modules: ProjectInterface.TDIService, address: string, s
 					reject("Время оплаты истекло");
 				}
 
-				count % 5 === 0 && callback?.(maxCount - count);
+				count % 10 === 0 && callback?.(maxCount - count);
 			}, 1000);
 
 			while (true) {
