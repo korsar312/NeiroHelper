@@ -46,7 +46,7 @@
       "dist/.env"
     ],
     "targets": [
-      "node22-linux-x64"
+      "node20-linux-x64"
     ]
   }
 }
