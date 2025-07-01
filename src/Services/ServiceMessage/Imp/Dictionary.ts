@@ -41,7 +41,7 @@ const Dictionary: MessageInterface.TDictionary = {
 		RU: "Времени осталось:",
 	},
 	SUBSCRIBE_COMPLETE: {
-		RU: "Подписка оформлена",
+		RU: "Подписка оформлена до:",
 	},
 	PAY_ADDRESS: {
 		RU: "Адрес: ",

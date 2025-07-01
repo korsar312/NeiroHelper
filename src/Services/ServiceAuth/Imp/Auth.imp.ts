@@ -57,9 +57,11 @@ class AuthImp implements AuthInterface.IAdapter {
 
 		const now = user.isOverSub ? new Date() : new Date(Number(user.timeOver));
 		now.setHours(now.getHours() + time);
-		const newDate = String(now.getTime());
 
-		this.setUserGrade(user.userId, user.grade, newDate);
+		const newDate = now.getTime();
+		this.setUserGrade(user.userId, user.grade, String(newDate));
+
+		return newDate;
 	}
 
 	public getAllUser() {

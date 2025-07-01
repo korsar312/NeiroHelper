@@ -4,7 +4,7 @@ export namespace AuthInterface {
 
 		setUserGrade(userId: number, grade: EGrade, date?: string): void;
 
-		addUserTime(userId: number, time: number): void;
+		addUserTime(userId: number, time: number): number;
 
 		getUserInfo(userId: number): TUserInfo;
 

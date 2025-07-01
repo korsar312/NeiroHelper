@@ -99,13 +99,11 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 
 			await CheckPay(modules, address, formatFullPrise, lastMinute);
 
-			const oneDayMs = 24 * 60 * 60 * 1000 * day;
-			const nowDate = new Date().getTime();
-			const subscribeDate = nowDate + oneDayMs;
+			const subscribeAfter = modules("Auth").invoke.addUserTime(chatId, day * 24);
+			const wordSubscribe = `${wordFinish} ${new Date(subscribeAfter).toLocaleDateString("ru-RU")}`;
 
-			modules("Auth").invoke.addUserTime(chatId, subscribeDate);
+			await modules("Telegram").invoke.sendMessage(wordSubscribe, chatId);
 
-			await modules("Telegram").invoke.sendMessage(wordFinish, chatId);
 			userPayList.delete(chatId);
 
 			function lastMinute(num: number) {
