@@ -1,6 +1,7 @@
 export namespace MessageInterface {
 	export interface IAdapter {
 		getWord(text: EWord, lang: ELang): string;
+		getSystemPromt(): Promise<string>;
 	}
 
 	export enum EWord {

@@ -12,7 +12,7 @@ class InferenceImpTest implements InferenceInterface.IAdapter {
 		this.Infrastructure = Infrastructure;
 	}
 
-	public async getPromt(question: string, instructions: string, context: string, history: InferenceInterface.THistoryField[]) {
+	public async getPromt(question: string, instructions: string, history: InferenceInterface.THistoryField[]) {
 		return new Promise<InferenceInterface.IGenerate>((resolve, reject) => {
 			if (Math.round(Math.random())) reject("getPromt");
 

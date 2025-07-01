@@ -19,30 +19,21 @@ export namespace FilesInterface {
 		LEARN = "learn",
 		AUTH = "userAuthList",
 		PROMPT = "Instruction",
+		STAT = "Statistic",
+		CONT = "Context",
 	}
 
 	export enum EFormat {
 		JSON = ".JSON",
 		JSONL = ".jsonl",
 		TXT = ".txt",
+		EXCEL = ".xlsx",
 	}
 
-	export const EFilePath = {
+	export const FilePath = {
 		LEARN: () => ({
 			path: `${EFolder.RECURSES}/${EFolder.LEARN}`,
 			name: EFileName.LEARN,
-			format: EFormat.JSONL,
-		}),
-
-		HISTORY: (userId: string) => ({
-			path: `${EFolder.RECURSES}/${EFolder.HISTORY}`,
-			name: userId,
-			format: EFormat.JSONL,
-		}),
-
-		AUTH: () => ({
-			path: `${EFolder.RECURSES}/${EFolder.AUTH}`,
-			name: EFileName.AUTH,
 			format: EFormat.JSONL,
 		}),
 
@@ -50,6 +41,18 @@ export namespace FilesInterface {
 			path: `${EFolder.RECURSES}/${EFolder.PROMPT}`,
 			name: EFileName.PROMPT,
 			format: EFormat.TXT,
+		}),
+
+		CONTEXT: () => ({
+			path: `${EFolder.RECURSES}/${EFolder.PROMPT}`,
+			name: EFileName.CONT,
+			format: EFormat.TXT,
+		}),
+
+		STATISTIC: () => ({
+			path: `${EFolder.RECURSES}/${EFolder.PROMPT}`,
+			name: EFileName.STAT,
+			format: EFormat.EXCEL,
 		}),
 	} satisfies Record<string, (name: string) => IParams>;
 

@@ -14,8 +14,6 @@ class Orchestrator {
 	}
 
 	public async start() {
-		await this.module("Files").invoke.getInstruction();
-
 		for (const platform of this.platforms) platform.invoke();
 	}
 }

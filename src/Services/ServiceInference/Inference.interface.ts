@@ -2,7 +2,7 @@ import { OpenAI } from "openai";
 
 export namespace InferenceInterface {
 	export interface IAdapter {
-		getPromt(question: string, instructions: string, context: string, history: THistoryField[]): Promise<IGenerate | undefined>;
+		getPromt(question: string, instructions: string, history: THistoryField[]): Promise<IGenerate | undefined>;
 	}
 
 	export interface IGenerate extends OpenAI.Responses.Response {}

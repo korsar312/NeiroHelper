@@ -1,22 +1,73 @@
 import { FilesInterface } from "../Files.interface";
+import { dirname, join } from "path";
+import { promises as fs } from "fs";
+import { createReadStream } from "node:fs";
+import readline from "node:readline";
+import readXlsxFile from "read-excel-file/node";
 
 class FilesImp implements FilesInterface.IAdapter {
-	private readonly connect: FilesInterface.IAdapter;
+	private async ensureDir(dirPath: string): Promise<void> {
+		const path = dirname(dirPath);
 
-	constructor(Connection: FilesInterface.IAdapter) {
-		this.connect = Connection;
+		await fs.mkdir(path, { recursive: true });
 	}
 
-	get readFile() {
-		return this.connect.readFile.bind(this.connect);
+	private async ndJsonParse(dirPath: string) {
+		const stream = createReadStream(dirPath, { encoding: "utf8" });
+		const rl = readline.createInterface({ input: stream, crlfDelay: Infinity });
+		const result: Record<string, any>[] = [];
+
+		for await (const line of rl) {
+			if (!line.trim()) continue;
+
+			try {
+				result.push(JSON.parse(line));
+			} catch {}
+		}
+
+		return result;
 	}
 
-	get addToFile() {
-		return this.connect.addToFile.bind(this.connect);
+	private async createPath(params: FilesInterface.IParams) {
+		const dirPath = join(params.path, params.name + params.format);
+		await this.ensureDir(params.path);
+
+		return dirPath;
 	}
 
-	get createFile() {
-		return this.connect.createFile.bind(this.connect);
+	async readFile(params: FilesInterface.IParams) {
+		const dirPath = await this.createPath(params);
+		await this.createFile(params);
+
+		switch (params.format) {
+			case FilesInterface.EFormat.TXT:
+				return await fs.readFile(dirPath, "utf8");
+			case FilesInterface.EFormat.JSON:
+				return JSON.parse(await fs.readFile(dirPath, "utf8"));
+			case FilesInterface.EFormat.EXCEL:
+				return await readXlsxFile(dirPath);
+			case FilesInterface.EFormat.JSONL:
+				return await this.ndJsonParse(dirPath);
+			default:
+				throw new Error(`Неизвестный тип для чтения файла: ${params.format}`);
+		}
+	}
+
+	async addToFile(params: FilesInterface.IParams, text: string) {
+		const dirPath = await this.createPath(params);
+		await this.createFile(params);
+
+		await fs.appendFile(dirPath, text + "\n", { encoding: "utf8" });
+	}
+
+	async createFile(params: FilesInterface.IParams) {
+		const dirPath = await this.createPath(params);
+
+		try {
+			await fs.access(dirPath);
+		} catch {
+			await fs.writeFile(dirPath, "", "utf8");
+		}
 	}
 }
 

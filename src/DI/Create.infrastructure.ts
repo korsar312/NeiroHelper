@@ -3,7 +3,6 @@ import { ProjectInterface } from "./Project.interface";
 import ConnectHTTP from "../Infrastructure/InfrastructureLinks/Connect/HTTP/Connect.HTTP";
 import LinksImp from "../Infrastructure/InfrastructureLinks/Imp/Links.imp";
 import { InfrastructureLinks } from "../Infrastructure/InfrastructureLinks";
-import ConnectFS from "../Infrastructure/InfrastructureFiles/Connect/FS/Connect.FS";
 import FilesImp from "../Infrastructure/InfrastructureFiles/Imp/Files.imp";
 import { InfrastructureFiles } from "../Infrastructure/InfrastructureFiles";
 import DbImp from "../Infrastructure/InfrastructureDb/Imp/Db.imp";
@@ -14,8 +13,7 @@ const linksConnect = new ConnectHTTP();
 const linksImps = new LinksImp(linksConnect);
 const links = new InfrastructureLinks(linksImps);
 
-const FilesConnect = new ConnectFS();
-const FilesImps = new FilesImp(FilesConnect);
+const FilesImps = new FilesImp();
 const Files = new InfrastructureFiles(FilesImps);
 
 const DBConnect = new ConnectSQLite();

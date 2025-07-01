@@ -12,7 +12,7 @@ class InferenceImp implements InferenceInterface.IAdapter {
 		this.Infrastructure = Infrastructure;
 	}
 
-	public async getPromt(question: string, instructions: string, context: string, history: InferenceInterface.THistoryField[]) {
+	public async getPromt(question: string, instructions: string, history: InferenceInterface.THistoryField[]) {
 		const historyPrompt: InferenceInterface.IDialog = history.reduce((prev, cur) => {
 			const user = createInput("user", cur.question);
 			const assistant = createInput("assistant", cur.answer);
@@ -23,19 +23,36 @@ class InferenceImp implements InferenceInterface.IAdapter {
 			return prev;
 		}, [] as InferenceInterface.IDialog);
 
-		const systemPrompt = createInput("system", instructions + "\n" + context);
+		const systemPrompt = createInput("system", instructions);
 		const userPrompt = createInput("user", question);
 
 		return this.client?.responses.create({
+			/** Модель для ответа */
 			model: "gpt-4.1-mini",
+
+			/** Список сообщений, передаваемых в модель в данном запросе */
 			input: [systemPrompt, ...historyPrompt, userPrompt],
+
+			/** Определяет формат вывода ответа (красивость) */
 			text: { format: { type: "text" } },
+
+			/** Настройки для внутреннего «мышления» модели */
 			reasoning: {},
+
+			/** Перечень внешних плагинов, к которым модель имеет доступ в данном запросе */
 			tools: [],
+
+			/** Параметр, отвечающий за «творческую свободу» генерации. 0 - нет свободы */
 			temperature: 1,
+
+			/** Максимальное число токенов, которое модель может выдать в ответе */
 			max_output_tokens: 2048,
+
+			/** Вероятность подбора редких слов. 0 - высокая вероятность */
 			top_p: 1,
-			store: true,
+
+			/** Модель для ответа*/
+			store: false,
 		});
 	}
 }

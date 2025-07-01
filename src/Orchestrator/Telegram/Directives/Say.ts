@@ -6,6 +6,7 @@ import { parseCommand } from "../Utils/ScriptParse";
 import { ProjectInterface } from "../../../DI/Project.interface";
 import { Secret } from "../../../Config/Secret";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
+import { listOfListsToCsv } from "../../../Utils";
 
 @RegisterDirective(OrchestratorTelegramInterface.EDirective.SAY)
 class Say implements OrchestratorTelegramInterface.IClass {
@@ -20,11 +21,11 @@ class Say implements OrchestratorTelegramInterface.IClass {
 
 	async text(modules: ProjectInterface.TDIService, text: string, chatId: number) {
 		const wordGetTo = modules("Message").invoke.getWord(MessageInterface.EWord.GET_TO_LLM, MessageInterface.ELang.RU);
+		const instruct = await modules("Message").invoke.getSystemPromt();
 
-		const instruct = await modules("Files").invoke.getInstruction();
 		const message = await modules("Telegram").invoke.sendMessage(wordGetTo, chatId);
 		const history = await modules("History").invoke.getHistory(chatId, Secret.historyQty);
-		const generate = await modules("Inference").invoke.getPromt(text, instruct, "", history);
+		const generate = await modules("Inference").invoke.getPromt(text, instruct, history);
 
 		if (generate?.output_text === undefined) throw new Error(`Отсутствие поля ответа \n== ${generate}`);
 		const reply = generate.output_text;
