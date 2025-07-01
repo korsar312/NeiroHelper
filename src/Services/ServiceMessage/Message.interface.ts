@@ -5,6 +5,7 @@ export namespace MessageInterface {
 	}
 
 	export enum EWord {
+		MAJOR_INSTRUCTION = "MAJOR_INSTRUCTION",
 		MAJOR_HELLO = "MAJOR_HELLO",
 		FOR_CAN_WORK = "FOR_CAN_WORK",
 		YOUR_ID = "YOUR_ID",

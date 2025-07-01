@@ -1,6 +1,9 @@
 import { MessageInterface } from "../Message.interface";
 
 const Dictionary: MessageInterface.TDictionary = {
+	MAJOR_INSTRUCTION: {
+		RU: "Чтобы вставить команду в поле ввода Telegram, нажмите и удерживайте её в меню команд.",
+	},
 	MAJOR_HELLO: {
 		RU: "Добро пожаловать в бота!",
 	},
