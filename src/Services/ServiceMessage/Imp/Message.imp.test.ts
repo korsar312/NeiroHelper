@@ -17,16 +17,10 @@ class MessageImpTest implements MessageInterface.IAdapter {
 		return "Тест";
 	}
 
-	public getInstruction() {
+	public getSystemPromt() {
 		if (Math.round(Math.random())) throw "getWord";
 
 		return new Promise<string>((resolve) => resolve("Тест"));
-	}
-
-	public getStatistic() {
-		if (Math.round(Math.random())) throw "getWord";
-
-		return new Promise<Array<Array<string>>>((resolve) => resolve([]));
 	}
 }
 
