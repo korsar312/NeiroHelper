@@ -91,4 +91,4 @@ const DIService = service;
 const orchestrator = new Orchestrator(DIService.get);
 
 orchestrator.use(OrchestratorTelegram);
-orchestrator.start();
+//orchestrator.start();
