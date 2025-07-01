@@ -1,6 +1,6 @@
 export namespace MessageInterface {
 	export interface IAdapter {
-		getWord(text: EWord, lang: ELang): string;
+		getWord(text: EWord, lang: ELang, arrReplace?: Array<string | number>): string;
 		getSystemPromt(): Promise<string>;
 	}
 

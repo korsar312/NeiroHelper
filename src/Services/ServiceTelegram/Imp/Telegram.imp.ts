@@ -24,8 +24,8 @@ class TelegramImp implements TelegramInterface.IAdapter {
 		return this.request<TelegramInterface.ISend>({ method: POST, link: ELink.SEND_MESSAGE, data });
 	}
 
-	public editMessage(text: string, chat_id: number, message_id: number) {
-		const data = { text, chat_id, message_id };
+	public editMessage(text: string, chat_id: number, message_id: number, options?: TelegramInterface.IMessageOptions) {
+		const data = { chat_id, text, message_id, parse_mode: options?.parseMode };
 
 		return this.request<TelegramInterface.ISend>({ method: POST, link: ELink.EDIT_MESSAGE, data });
 	}

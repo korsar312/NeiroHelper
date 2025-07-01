@@ -4,7 +4,7 @@ export namespace TelegramInterface {
 	export interface IAdapter {
 		sendMessage(text: string, chat_id: number, options?: IMessageOptions): Promise<ISend>;
 
-		editMessage(text: string, chat_id: number, message_id: number): Promise<ISend>;
+		editMessage(text: string, chat_id: number, message_id: number, options?: IMessageOptions): Promise<ISend>;
 
 		getMessage(lastId?: number): Promise<TelegramInterface.IUpdate[]>;
 

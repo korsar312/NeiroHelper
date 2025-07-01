@@ -75,24 +75,27 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			if (isNaN(day)) throw new Error(`Неверно указано количество дней`);
 			if (day < 1) throw new Error(`Количество дней не может быть меньше 1`);
 
-			const wordInstruction = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_INSTRUCTION, MessageInterface.ELang.RU);
-			const wordAddress = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_ADDRESS, MessageInterface.ELang.RU);
-			const wordSum = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_SUM, MessageInterface.ELang.RU);
-			const wordMinute = modules("Message").invoke.getWord(MessageInterface.EWord.TIME_LEFT, MessageInterface.ELang.RU);
-			const SubPeriod = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_PERIOD, MessageInterface.ELang.RU);
-			const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_COMPLETE, MessageInterface.ELang.RU);
-
 			const address = Secret.addressWalletWork;
 			const payAmount = +Secret.payToDay * day;
 
 			const formatFullPrise = await this.getUniqSum(payAmount);
 			userPayList.set(chatId, formatFullPrise);
 
-			const wordContract = `${wordInstruction}\n\n${wordAddress}\n${address}\n\n${wordSum}\n${formatFullPrise}\n\n${SubPeriod}\n${day}\n\n${wordMinute}`;
+			const wordInstruction = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_INSTRUCTION, MessageInterface.ELang.RU, [
+				`<b>(${day})</b>`,
+				`<b>${formatFullPrise}</b>`,
+			]);
+			const wordAddress = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_ADDRESS, MessageInterface.ELang.RU);
+			const wordSum = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_SUM, MessageInterface.ELang.RU);
+			const wordMinute = modules("Message").invoke.getWord(MessageInterface.EWord.TIME_LEFT, MessageInterface.ELang.RU);
+			const SubPeriod = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_PERIOD, MessageInterface.ELang.RU);
+			const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_COMPLETE, MessageInterface.ELang.RU);
+
+			const wordContract = `${wordInstruction}\n\n${wordAddress}\n<code>${address}</code>\n\n${wordSum}\n<code>${formatFullPrise}</code>\n\n${SubPeriod}\n${day}\n\n${wordMinute}`;
 
 			const messageTimeLeft = messageId
-				? await modules("Telegram").invoke.editMessage(wordContract, chatId, messageId)
-				: await modules("Telegram").invoke.sendMessage(wordContract, chatId);
+				? await modules("Telegram").invoke.editMessage(wordContract, chatId, messageId, { parseMode: "HTML" })
+				: await modules("Telegram").invoke.sendMessage(wordContract, chatId, { parseMode: "HTML" });
 
 			await CheckPay(modules, address, formatFullPrise, lastMinute);
 
@@ -108,7 +111,7 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			function lastMinute(num: number) {
 				try {
 					modules("Telegram")
-						.invoke.editMessage(`${wordContract} ${num}`, chatId, messageTimeLeft.message_id)
+						.invoke.editMessage(`${wordContract} ${num}`, chatId, messageTimeLeft.message_id, { parseMode: "HTML" })
 						.catch(() => {});
 				} catch (e) {}
 			}

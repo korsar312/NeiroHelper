@@ -12,8 +12,12 @@ class MessageImp implements MessageInterface.IAdapter {
 		this.Infrastructure = Infrastructure;
 	}
 
-	public getWord(word: MessageInterface.EWord, lang: MessageInterface.ELang) {
-		return this.dictionary[word][lang];
+	public getWord(word: MessageInterface.EWord, lang: MessageInterface.ELang, arrReplace?: string[]) {
+		let text = this.dictionary[word][lang];
+
+		if (arrReplace?.length) text = getText(text, arrReplace);
+
+		return text;
 	}
 
 	public async getSystemPromt() {
@@ -36,3 +40,13 @@ ${statText}
 }
 
 export default MessageImp;
+
+function getText(text: string, arrReplace: Array<string | number>): string {
+	return text.replace(/\{\{(\d+)\}\}/g, (_, group1) => {
+		const idx = Number(group1) - 1; // {{1}} → индекс 0
+		const replacement = arrReplace[idx];
+		return replacement !== undefined // если есть замена
+			? String(replacement) // – приводим к строке
+			: `{{${group1}}}`; // – иначе оставляем как есть
+	});
+}

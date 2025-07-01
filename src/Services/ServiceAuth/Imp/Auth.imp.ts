@@ -3,6 +3,7 @@ import { ProjectInterface } from "../../../DI/Project.interface";
 import { OrchestratorTelegramInterface } from "../../../Orchestrator/Telegram/OrchestratorTelegram.interface";
 
 const allAccess = [
+	OrchestratorTelegramInterface.EDirective.START,
 	OrchestratorTelegramInterface.EDirective.NO_AUTH,
 	OrchestratorTelegramInterface.EDirective.GET_BALANCE,
 	OrchestratorTelegramInterface.EDirective.PAY,

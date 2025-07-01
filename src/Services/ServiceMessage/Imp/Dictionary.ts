@@ -47,7 +47,7 @@ const Dictionary: MessageInterface.TDictionary = {
 		RU: "Сумма: ",
 	},
 	PAY_INSTRUCTION: {
-		RU: "Переведите по TRC20 ТОЧНОЕ количество USDT",
+		RU: "Для продления подписки на {{1}} дней выполните перевод РОВНО на сумму {{2}} USDT по сети TRC20",
 	},
 	CLEAR_DISC: {
 		RU: "Очистка истории",
