@@ -8,17 +8,33 @@ on:
 
 jobs:
   build:
-    # Точно та же Ubuntu 22.04, что и на проде
     runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
+      # Кэшируем npm-модули между сборками
+      - name: Cache npm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      # Кэшируем APT-пакеты (архивы .deb)
+      - name: Cache apt packages
+        uses: actions/cache@v3
+        with:
+          path: /var/cache/apt/archives
+          key: ${{ runner.os }}-apt-packages
+          restore-keys: |
+            ${{ runner.os }}-apt-
+
+      - name: Setup Node.js 22.15.0
         uses: actions/setup-node@v3
         with:
-          # Точно та же версия, что на сервере
           node-version: '22.15.0'
 
       - name: Install build deps
@@ -29,7 +45,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Rebuild better-sqlite3 from source (glibc 2.35)
+      - name: Rebuild better-sqlite3 from source
         run: npm rebuild better-sqlite3 --build-from-source --verbose
 
       - name: Build bundle with ncc
