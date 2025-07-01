@@ -51,8 +51,8 @@ class TelegramImpTest implements TelegramInterface.IAdapter {
 	public sendMessage(text: string, chat_id: number, options?: TelegramInterface.IMessageOptions) {
 		if (Math.round(Math.random())) throw "sendMessage";
 
-		const btn = options?.buttons.map((el) => ({ text: el.text, callback_data: el.click }));
-		const data = { chat_id, text, reply_markup: options && { inline_keyboard: [btn] } };
+		const btn = options?.buttons?.map((el) => ({ text: el.text, callback_data: el.click }));
+		const data = { chat_id, text, parse_mode: options?.parseMode, reply_markup: { inline_keyboard: btn && [btn] } };
 
 		return this.request<TelegramInterface.ISend>({ method: POST, link: ELink.SEND_MESSAGE, data });
 	}
