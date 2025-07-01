@@ -19,6 +19,21 @@ class AuthImpTest implements AuthInterface.IAdapter {
 		if (Math.round(Math.random())) throw "setUserGrade";
 	}
 
+	addUserTime(userId: number, date: number) {
+		if (Math.round(Math.random())) throw "setUserGrade";
+	}
+
+	getUserInfo(userId: number) {
+		if (Math.round(Math.random())) throw "setUserGrade";
+
+		return {
+			userId,
+			grade: AuthInterface.EGrade.GOY,
+			isOverSub: true,
+			timeLeft: 0,
+		};
+	}
+
 	getAllUser() {
 		if (Math.round(Math.random())) throw "getAllUser";
 

@@ -17,17 +17,13 @@ class AddAuth implements OrchestratorTelegramInterface.IClass {
 		const [addedId, hours] = text.split(" ");
 
 		const addUserValid = Number(addedId);
+		const hoursAdd = Number(hours);
 
 		if (isNaN(addUserValid)) throw new Error(`Ошибка парсинга id`);
-		if (isNaN(+(hours || ""))) throw new Error(`Ошибка парсинга даты`);
+		if (isNaN(hoursAdd)) throw new Error(`Ошибка парсинга даты`);
 
-		const now = new Date();
-		now.setHours(now.getHours() + +hours);
-		const newDate = String(now.getTime());
+		modules("Auth").invoke.addUserTime(addUserValid, +hours);
 
-		modules("Auth").invoke.setUserGrade(addUserValid, AuthInterface.EGrade.GOY, newDate);
-		modules("Telegram")
-			.invoke.sendMessage(wordFinish, userId)
-			.catch(() => {});
+		await modules("Telegram").invoke.sendMessage(wordFinish, userId);
 	}
 }

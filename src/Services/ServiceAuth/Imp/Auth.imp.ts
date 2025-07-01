@@ -47,12 +47,40 @@ class AuthImp implements AuthInterface.IAdapter {
 		return false;
 	}
 
-	setUserGrade(userId: number, grade: AuthInterface.EGrade, date?: string) {
+	public setUserGrade(userId: number, grade: AuthInterface.EGrade, date?: string) {
 		this.Infrastructure("DB").invoke.create.grade(userId, grade, date);
 	}
 
-	getAllUser() {
+	public addUserTime(userId: number, time: number) {
+		const user = this.getUserInfo(userId);
+
+		const now = user.isOverSub ? new Date() : new Date(Number(user.timeOver));
+		now.setHours(now.getHours() + time);
+		const newDate = String(now.getTime());
+
+		this.setUserGrade(user.userId, user.grade, newDate);
+	}
+
+	public getAllUser() {
 		return this.Infrastructure("DB").invoke.readAll.grade();
+	}
+
+	public getUserInfo(userId: number): AuthInterface.TUserInfo {
+		const user = this.Infrastructure("DB").invoke.read.grade(userId);
+
+		if (!user) {
+			const startRole = AuthInterface.EGrade.GOY;
+			this.setUserGrade(userId, startRole);
+
+			return { userId, isOverSub: true, timeLeft: 0, grade: startRole };
+		}
+
+		const userTimeOverStamp = user.expiresAt || 0;
+		const timeLeftCalc = +userTimeOverStamp - new Date().getTime();
+		const timeLeft = timeLeftCalc < 0 ? 0 : timeLeftCalc;
+		const isOverSub = timeLeft <= 0;
+
+		return { userId, isOverSub, timeLeft, grade: user.role as AuthInterface.EGrade, timeOver: user.expiresAt };
 	}
 
 	removeUser(userId: number) {

@@ -4,6 +4,10 @@ export namespace AuthInterface {
 
 		setUserGrade(userId: number, grade: EGrade, date?: string): void;
 
+		addUserTime(userId: number, time: number): void;
+
+		getUserInfo(userId: number): TUserInfo;
+
 		getAllUser(): Array<{ id: { role: string; expiresAt?: string }[] }>;
 
 		removeUser(userId: number): void;
@@ -14,4 +18,12 @@ export namespace AuthInterface {
 		ADMIN = "ADMIN",
 		SUPER = "SUPER",
 	}
+
+	export type TUserInfo = {
+		userId: number;
+		grade: EGrade;
+		isOverSub: boolean;
+		timeLeft: number;
+		timeOver?: string;
+	};
 }

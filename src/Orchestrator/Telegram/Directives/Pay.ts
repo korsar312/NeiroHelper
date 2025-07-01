@@ -8,6 +8,7 @@ import { Secret } from "../../../Config/Secret";
 import CheckPay from "../../Script/CheckPay";
 import { parseCommand } from "../Utils/ScriptParse";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
+import { throws } from "node:assert";
 
 const userPayList: Map<number, string> = new Map();
 
@@ -67,8 +68,13 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 		}
 	}
 
-	async offer(modules: ProjectInterface.TDIService, numberDay: number, chatId: number) {
+	async offer(modules: ProjectInterface.TDIService, numberDay: number | string, chatId: number) {
 		try {
+			const day = Math.round(Number(numberDay));
+
+			if (isNaN(day)) throw new Error(`Неверно указано количество дней`);
+			if (day < 1) throw new Error(`Количество дней не может быть меньше 1`);
+
 			const wordInstruction = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_INSTRUCTION, MessageInterface.ELang.RU);
 			const wordAddress = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_ADDRESS, MessageInterface.ELang.RU);
 			const wordSum = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_SUM, MessageInterface.ELang.RU);
@@ -77,21 +83,21 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_COMPLETE, MessageInterface.ELang.RU);
 
 			const address = Secret.addressWalletWork;
-			const payAmount = +Secret.payToDay * numberDay;
+			const payAmount = +Secret.payToDay * day;
 
 			const formatFullPrise = await this.getUniqSum(payAmount);
 			userPayList.set(chatId, formatFullPrise);
 
-			const wordContract = `${wordInstruction}\n\n${wordAddress}\n${address}\n\n${wordSum}\n${formatFullPrise}\n\n${SubPeriod}\n${numberDay}\n\n${wordMinute}`;
+			const wordContract = `${wordInstruction}\n\n${wordAddress}\n${address}\n\n${wordSum}\n${formatFullPrise}\n\n${SubPeriod}\n${day}\n\n${wordMinute}`;
 			const messageTimeLeft = await modules("Telegram").invoke.sendMessage(wordContract, chatId);
 
 			await CheckPay(modules, address, formatFullPrise, lastMinute);
 
-			const oneDayMs = 24 * 60 * 60 * 1000 * numberDay;
+			const oneDayMs = 24 * 60 * 60 * 1000 * day;
 			const nowDate = new Date().getTime();
-			const subscribeDate = String(nowDate + oneDayMs);
+			const subscribeDate = nowDate + oneDayMs;
 
-			modules("Auth").invoke.setUserGrade(chatId, AuthInterface.EGrade.GOY, subscribeDate);
+			modules("Auth").invoke.addUserTime(chatId, subscribeDate);
 
 			await modules("Telegram").invoke.sendMessage(wordFinish, chatId);
 			userPayList.delete(chatId);
