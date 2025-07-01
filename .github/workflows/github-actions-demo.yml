@@ -51,13 +51,6 @@ jobs:
       - name: Build bundle with ncc
         run: npx ncc build src/index.ts -m -o dist
 
-      - name: Copy .env
-        run: |
-          if [ -f .env ]; then
-            cp .env dist/.env
-          fi
-
-
       - name: Install pkg
         run: npm install --no-save pkg
 
