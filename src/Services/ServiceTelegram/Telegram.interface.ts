@@ -76,7 +76,8 @@ export namespace TelegramInterface {
 	}
 
 	export interface IMessageOptions {
-		buttons: TButton[];
+		buttons?: TButton[];
+		parseMode?: "HTML";
 	}
 
 	export type TButton = {

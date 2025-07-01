@@ -33,7 +33,7 @@ class InferenceImp implements InferenceInterface.IAdapter {
 			/** Список сообщений, передаваемых в модель в данном запросе */
 			input: [systemPrompt, ...historyPrompt, userPrompt],
 
-			/** Определяет формат вывода ответа (красивость) */
+			/** Определяет формат вывода ответа */
 			text: { format: { type: "text" } },
 
 			/** Настройки для внутреннего «мышления» модели */
@@ -64,6 +64,7 @@ function createInput(role: EasyInputMessage["role"], text: string): EasyInputMes
 		case "assistant":
 			content = [{ type: "output_text", text }];
 			break;
+		case "developer":
 		case "system":
 			content = [{ type: "input_text", text }];
 			break;
