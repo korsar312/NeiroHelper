@@ -7,6 +7,7 @@ import "./Directives/DeleteAuth";
 import "./Directives/AddAuth";
 import "./Directives/GetUserList";
 import "./Directives/GetBalance";
+import "./Directives/Start";
 import { parseCommand } from "./Utils/ScriptParse";
 import { getDirective } from "./Utils/ScriptRegistry";
 import OrchestratorBase from "../OrchestratorBase";

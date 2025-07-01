@@ -5,6 +5,9 @@ export namespace MessageInterface {
 	}
 
 	export enum EWord {
+		MAJOR_HELLO = "MAJOR_HELLO",
+		FOR_CAN_WORK = "FOR_CAN_WORK",
+		YOUR_ID = "YOUR_ID",
 		USDT = "USDT",
 		SUBSCRIBE_PERIOD = "SUBSCRIBE_PERIOD",
 		CHOICE_PAY_DAY = "CHOICE_PAY_DAY",

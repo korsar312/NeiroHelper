@@ -12,6 +12,7 @@ export namespace OrchestratorTelegramInterface {
 		NO_AUTH = "/noAuth",
 		CLEAR = "/clear",
 		PAY = "/pay",
+		START = "/start",
 		ADD_AUTH = "/addUser",
 		GET_BALANCE = "/getusdt",
 		DEL_AUTH = "/delUser",

@@ -1,6 +1,15 @@
 import { MessageInterface } from "../Message.interface";
 
 const Dictionary: MessageInterface.TDictionary = {
+	MAJOR_HELLO: {
+		RU: "Добро пожаловать в бота!",
+	},
+	FOR_CAN_WORK: {
+		RU: "Для получения доступа введите команду:",
+	},
+	YOUR_ID: {
+		RU: "Ваш персональный айди:",
+	},
 	USDT: {
 		RU: "USDT:",
 	},
