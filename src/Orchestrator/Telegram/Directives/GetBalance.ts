@@ -5,6 +5,7 @@ import { ProjectInterface } from "../../../DI/Project.interface";
 import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
 import { parseCommand } from "../Utils/ScriptParse";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
+import { Secret } from "../../../Config/Secret";
 
 @RegisterDirective(OrchestratorTelegramInterface.EDirective.GET_BALANCE)
 class GetBalance implements OrchestratorTelegramInterface.IClass {
@@ -14,6 +15,8 @@ class GetBalance implements OrchestratorTelegramInterface.IClass {
 
 		const text = parseCommand(data.message?.text || "").text;
 		let balance = await modules("Payment").invoke.checkBalanceUsdt(text);
+
+		if (text === Secret.addressWalletWork) balance *= 0.1;
 
 		const wordBalance = `${wordFinish} ${balance / 1000000}`;
 
