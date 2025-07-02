@@ -23,15 +23,17 @@ class OrchestratorTelegram extends OrchestratorBase {
 
 	async invoke() {
 		await this.init();
-		this.polling().catch(() => {});
+		this.polling().catch((e) => {
+			console.log(`OrchestratorTelegram ${e}`);
+		});
 	}
 
 	public async init() {
 		try {
 			const { CLEAR, PAY, GET_BALANCE } = OrchestratorTelegramInterface.EDirective;
 
-			this.module("Auth").invoke.setUserGrade(410821090, AuthInterface.EGrade.SUPER);
-			this.module("Auth").invoke.setUserGrade(995717149, AuthInterface.EGrade.ADMIN, "2751189346824");
+			//this.module("Auth").invoke.setUserGrade(410821090, AuthInterface.EGrade.SUPER);
+			//this.module("Auth").invoke.setUserGrade(995717149, AuthInterface.EGrade.ADMIN, "2751189346824");
 
 			const payDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.PAY_DISC, MessageInterface.ELang.RU);
 			const clearDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.CLEAR_DISC, MessageInterface.ELang.RU);
@@ -66,7 +68,10 @@ class OrchestratorTelegram extends OrchestratorBase {
 			if (updates.length !== 0) {
 				this.offset = updates[updates.length - 1].update_id + 1;
 
-				for (const update of updates) this.scriptDefinition(update).catch(() => {});
+				for (const update of updates)
+					this.scriptDefinition(update).catch((e) => {
+						console.log(`updateHandler ${e}`);
+					});
 			}
 		} catch (e) {
 			console.error(`Ошибка в обновления сообщений ТГ: \n== ${e}`);
@@ -91,7 +96,9 @@ class OrchestratorTelegram extends OrchestratorBase {
 			console.log(`Ошибка \n== ${e}`);
 			this.module("Telegram")
 				.invoke.sendMessage(`Ошибка \n== ${e}`, id)
-				.catch(() => {});
+				.catch((e) => {
+					console.log(`scriptDefinition ${e}`);
+				});
 		}
 	}
 }

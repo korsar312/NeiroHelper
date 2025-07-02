@@ -25,7 +25,9 @@ async function CheckPay(modules: ProjectInterface.TDIService, address: string, s
 			while (true) {
 				const isExist = await modules("Payment")
 					.invoke.isExistTransaction(address, timestamp, sum)
-					.catch(() => {});
+					.catch((e) => {
+						console.log(`isExist ${e}`);
+					});
 
 				if (isExist) {
 					clearInterval(tick);

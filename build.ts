@@ -19,7 +19,7 @@ function main(): void {
 
 		// 1) Сборка ncc
 		console.log("⚙️  Building with ncc…");
-		execSync("ncc build src/index.ts -m -o dist", { stdio: "inherit" });
+		execSync("ncc build src/index.ts -o dist", { stdio: "inherit" });
 
 		// 2) Копируем .env
 		if (existsSync(envFile) && statSync(envFile).isFile()) {

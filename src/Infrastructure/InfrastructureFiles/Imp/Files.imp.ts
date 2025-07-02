@@ -22,7 +22,9 @@ class FilesImp implements FilesInterface.IAdapter {
 
 			try {
 				result.push(JSON.parse(line));
-			} catch {}
+			} catch (e) {
+				console.log(`ndJsonParse ${e}`);
+			}
 		}
 
 		return result;

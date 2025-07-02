@@ -22,6 +22,8 @@ class GetBalance implements OrchestratorTelegramInterface.IClass {
 
 		modules("Telegram")
 			.invoke.sendMessage(wordBalance, userId)
-			.catch(() => {});
+			.catch((e) => {
+				console.log(`GetBalance ${e}`);
+			});
 	}
 }

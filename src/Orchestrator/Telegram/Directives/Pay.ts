@@ -74,6 +74,7 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 
 			if (isNaN(day)) throw new Error(`Неверно указано количество дней`);
 			if (day < 1) throw new Error(`Количество дней не может быть меньше 1`);
+			if (day > 1000) throw new Error(`Количество дней превышает возможное`);
 
 			const address = Secret.addressWalletWork;
 			const payAmount = +Secret.payToDay * day;
@@ -110,8 +111,12 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 				try {
 					modules("Telegram")
 						.invoke.editMessage(`${wordContract} ${num}`, chatId, messageTimeLeft.message_id, { parseMode: "HTML" })
-						.catch(() => {});
-				} catch (e) {}
+						.catch((e) => {
+							console.log(`lastMinute ${e}`);
+						});
+				} catch (e) {
+					console.log(`lastMinute2 ${e}`);
+				}
 			}
 		} catch (e) {
 			userPayList.delete(chatId);
