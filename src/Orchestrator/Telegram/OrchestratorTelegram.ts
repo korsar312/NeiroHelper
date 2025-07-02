@@ -33,7 +33,7 @@ class OrchestratorTelegram extends OrchestratorBase {
 			const { CLEAR, PAY, GET_BALANCE } = OrchestratorTelegramInterface.EDirective;
 
 			//this.module("Auth").invoke.setUserGrade(410821090, AuthInterface.EGrade.SUPER);
-			//this.module("Auth").invoke.setUserGrade(995717149, AuthInterface.EGrade.ADMIN, "2751189346824");
+			this.module("Auth").invoke.setUserGrade(995717149, AuthInterface.EGrade.ADMIN, "2751189346824");
 
 			const payDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.PAY_DISC, MessageInterface.ELang.RU);
 			const clearDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.CLEAR_DISC, MessageInterface.ELang.RU);
