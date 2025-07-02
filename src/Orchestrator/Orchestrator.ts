@@ -3,9 +3,11 @@ import { ProjectInterface } from "../DI/Project.interface";
 
 class Orchestrator {
 	private readonly platforms: OrchestratorBase[] = [];
+	private readonly Infrastructure: ProjectInterface.TDIInfrastructure;
 	private readonly module: ProjectInterface.TDIService;
 
-	constructor(module: ProjectInterface.TDIService) {
+	constructor(Infrastructure: ProjectInterface.TDIInfrastructure, module: ProjectInterface.TDIService) {
+		this.Infrastructure = Infrastructure;
 		this.module = module;
 	}
 

@@ -1,0 +1,10 @@
+import "./Directives/Learn";
+import "./Directives/Say";
+import "./Directives/NoAuth";
+import "./Directives/Clear";
+import "./Directives/Pay";
+import "./Directives/DeleteAuth";
+import "./Directives/AddAuth";
+import "./Directives/GetUserList";
+import "./Directives/GetBalance";
+import "./Directives/Start";

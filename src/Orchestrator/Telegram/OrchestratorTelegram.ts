@@ -1,13 +1,4 @@
-import "./Directives/Learn";
-import "./Directives/Say";
-import "./Directives/NoAuth";
-import "./Directives/Clear";
-import "./Directives/Pay";
-import "./Directives/DeleteAuth";
-import "./Directives/AddAuth";
-import "./Directives/GetUserList";
-import "./Directives/GetBalance";
-import "./Directives/Start";
+import "./OrchestratorTelegram.init";
 import { parseCommand } from "./Utils/ScriptParse";
 import { getDirective } from "./Utils/ScriptRegistry";
 import OrchestratorBase from "../OrchestratorBase";

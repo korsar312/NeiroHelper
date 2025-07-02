@@ -6,7 +6,6 @@ import { parseCommand } from "../Utils/ScriptParse";
 import { ProjectInterface } from "../../../DI/Project.interface";
 import { Secret } from "../../../Config/Secret";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
-import { listOfListsToCsv } from "../../../Utils";
 
 @RegisterDirective(OrchestratorTelegramInterface.EDirective.SAY)
 class Say implements OrchestratorTelegramInterface.IClass {
