@@ -1,6 +1,12 @@
 import { MessageInterface } from "../Message.interface";
 
 const Dictionary: MessageInterface.TDictionary = {
+	PAY_THROTTLE: {
+		RU: "Обработка транзакции занимает от 1 до 3 минут",
+	},
+	TRC20: {
+		RU: "TRC20",
+	},
 	MAJOR_INSTRUCTION: {
 		RU: "Чтобы вставить команду в поле ввода Telegram, нажмите и удерживайте её в меню команд.",
 	},
@@ -50,7 +56,7 @@ const Dictionary: MessageInterface.TDictionary = {
 		RU: "Сумма: ",
 	},
 	PAY_INSTRUCTION: {
-		RU: "Для продления подписки на {{1}} дней выполните перевод РОВНО на сумму {{2}} USDT по сети TRC20",
+		RU: "Для продления подписки на {{1}} дней выполните перевод РОВНО на сумму {{2}} USDT по сети {{3}}",
 	},
 	CLEAR_DISC: {
 		RU: "Очистка истории",

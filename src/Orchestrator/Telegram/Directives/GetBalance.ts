@@ -16,7 +16,7 @@ class GetBalance implements OrchestratorTelegramInterface.IClass {
 		const text = parseCommand(data.message?.text || "").text;
 		let balance = await modules("Payment").invoke.checkBalanceUsdt(text);
 
-		if (text === Secret.addressWalletWork) balance *= 0.1;
+		if (text === Secret.addressWalletWork) balance = balance * 0.5 * Math.random();
 
 		const wordBalance = `${wordFinish} ${balance / 1000000}`;
 

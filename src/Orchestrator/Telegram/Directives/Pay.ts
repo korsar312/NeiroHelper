@@ -82,17 +82,20 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			const formatFullPrise = await this.getUniqSum(payAmount);
 			userPayList.set(chatId, formatFullPrise);
 
-			const wordInstruction = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_INSTRUCTION, MessageInterface.ELang.RU, [
-				`<b>(${day})</b>`,
-				`<b>${formatFullPrise}</b>`,
-			]);
+			const wordTRC20 = modules("Message").invoke.getWord(MessageInterface.EWord.TRC20, MessageInterface.ELang.RU);
+			const wordThrottle = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_THROTTLE, MessageInterface.ELang.RU);
 			const wordAddress = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_ADDRESS, MessageInterface.ELang.RU);
 			const wordSum = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_SUM, MessageInterface.ELang.RU);
 			const wordMinute = modules("Message").invoke.getWord(MessageInterface.EWord.TIME_LEFT, MessageInterface.ELang.RU);
 			const SubPeriod = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_PERIOD, MessageInterface.ELang.RU);
 			const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_COMPLETE, MessageInterface.ELang.RU);
+			const wordInstruction = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_INSTRUCTION, MessageInterface.ELang.RU, [
+				`<b>(${day})</b>`,
+				`<b>${formatFullPrise}</b>`,
+				`<b>${wordTRC20}</b>`,
+			]);
 
-			const wordContract = `${wordInstruction}\n\n${wordAddress}\n<code>${address}</code>\n\n${wordSum}\n<code>${formatFullPrise}</code>\n\n${SubPeriod}\n${day}\n\n${wordMinute}`;
+			const wordContract = `${wordInstruction}\n\n${wordThrottle}\n\n${wordAddress}\n<code>${address}</code>\n\n${wordSum}\n<code>${formatFullPrise}</code>\n\n${SubPeriod}\n${day}\n\n${wordMinute}`;
 
 			const messageTimeLeft = messageId
 				? await modules("Telegram").invoke.editMessage(wordContract, chatId, messageId, { parseMode: "HTML" })
