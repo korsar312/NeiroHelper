@@ -1,5 +1,6 @@
 import { ProjectInterface } from "../../DI/Project.interface";
 import { clearInterval } from "node:timers";
+import { throwFn } from "../../Utils";
 
 async function CheckPay(modules: ProjectInterface.TDIService, address: string, sum: string, callback?: (timer: number) => void) {
 	let count = 0;
@@ -16,7 +17,7 @@ async function CheckPay(modules: ProjectInterface.TDIService, address: string, s
 
 				if (count > maxCount) {
 					clearInterval(tick);
-					reject("Время оплаты истекло");
+					reject("ВНИМАНИЕ!\n\nОплата не была произведена в установленный срок");
 				}
 
 				count % 10 === 0 && callback?.(maxCount - count);
@@ -25,9 +26,7 @@ async function CheckPay(modules: ProjectInterface.TDIService, address: string, s
 			while (true) {
 				const isExist = await modules("Payment")
 					.invoke.isExistTransaction(address, timestamp, sum)
-					.catch((e) => {
-						console.log(`isExist ${e}`);
-					});
+					.catch((e) => console.log(`isExist ${e}`));
 
 				if (isExist) {
 					clearInterval(tick);
@@ -38,7 +37,7 @@ async function CheckPay(modules: ProjectInterface.TDIService, address: string, s
 			}
 		});
 	} catch (e) {
-		throw new Error(`Ошибка оплаты \n== ${e}`);
+		throwFn(`Ошибка оплаты`, e);
 	}
 }
 

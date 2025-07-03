@@ -1,5 +1,6 @@
 import { LinksInterface } from "../Links.interface";
 import { Readable } from "node:stream";
+import { throwFn } from "../../../Utils";
 
 class LinksImp implements LinksInterface.IAdapter {
 	private async parse(response: Response) {
@@ -18,7 +19,7 @@ class LinksImp implements LinksInterface.IAdapter {
 				return { ok: true, result: nodeReadable };
 			}
 			default:
-				throw new Error(`Неизвестный тип для парсинга файла: ${contentType}`);
+				throwFn(`Неизвестный тип для парсинга файла: ${contentType}`);
 		}
 	}
 

@@ -7,6 +7,7 @@ import { TelegramInterface } from "../../Services/ServiceTelegram/Telegram.inter
 import { MessageInterface } from "../../Services/ServiceMessage/Message.interface";
 import { AuthInterface } from "../../Services/ServiceAuth/Auth.interface";
 import { scriptGetChatId } from "./Utils/ScriptGetChatId";
+import { IThrow, throwFn } from "../../Utils";
 
 class OrchestratorTelegram extends OrchestratorBase {
 	private offset = 0;
@@ -14,9 +15,7 @@ class OrchestratorTelegram extends OrchestratorBase {
 
 	async invoke() {
 		await this.init();
-		this.polling().catch((e) => {
-			console.log(`OrchestratorTelegram ${e}`);
-		});
+		this.polling().catch((e) => console.log(`OrchestratorTelegram ${e}`));
 	}
 
 	public async init() {
@@ -59,10 +58,7 @@ class OrchestratorTelegram extends OrchestratorBase {
 			if (updates.length !== 0) {
 				this.offset = updates[updates.length - 1].update_id + 1;
 
-				for (const update of updates)
-					this.scriptDefinition(update).catch((e) => {
-						console.log(`updateHandler ${e}`);
-					});
+				for (const update of updates) this.scriptDefinition(update).catch((e) => console.log(`updateHandler ${e}`));
 			}
 		} catch (e) {
 			console.error(`Ошибка в обновления сообщений ТГ: \n== ${e}`);
@@ -80,16 +76,16 @@ class OrchestratorTelegram extends OrchestratorBase {
 			if (!isAuth) command = OrchestratorTelegramInterface.EDirective.NO_AUTH;
 
 			const directive = getDirective(command);
-			if (directive === null) throw new Error(`Невалидная команда ${command}`);
+			if (directive === null) throwFn(`Невалидная команда ${command}`);
 
 			await directive.invoke(this.module, update);
 		} catch (e) {
-			console.log(`Ошибка \n== ${e}`);
+			const err = e as IThrow;
+			console.log(`Ошибка \n== ${err.error}`);
+
 			this.module("Telegram")
-				.invoke.sendMessage(`Ошибка \n== ${e}`, id)
-				.catch((e) => {
-					console.log(`scriptDefinition ${e}`);
-				});
+				.invoke.sendMessage(err.reasonUser || `Ошибка`, id)
+				.catch((e) => console.log(`scriptDefinition ${e}`));
 		}
 	}
 }

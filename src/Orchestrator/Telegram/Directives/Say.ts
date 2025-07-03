@@ -6,6 +6,7 @@ import { parseCommand } from "../Utils/ScriptParse";
 import { ProjectInterface } from "../../../DI/Project.interface";
 import { Secret } from "../../../Config/Secret";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
+import { throwFn } from "../../../Utils";
 
 @RegisterDirective(OrchestratorTelegramInterface.EDirective.SAY)
 class Say implements OrchestratorTelegramInterface.IClass {
@@ -14,7 +15,7 @@ class Say implements OrchestratorTelegramInterface.IClass {
 			if (data.message?.text) return await this.text(modules, parseCommand(data.message.text).text, scriptGetChatId(data));
 		} catch (e) {
 			console.log(`Ошибка ответа нейросети \\n== ${e}`);
-			throw new Error(`Ошибка ответа нейросети`); //\n== ${e}
+			throwFn(`Ошибка ответа нейросети`, e);
 		}
 	}
 
@@ -26,7 +27,7 @@ class Say implements OrchestratorTelegramInterface.IClass {
 		const history = await modules("History").invoke.getHistory(chatId, Secret.historyQty);
 		const generate = await modules("Inference").invoke.getPromt(text, instruct, history);
 
-		if (generate?.output_text === undefined) throw new Error(`Отсутствие поля ответа \n== ${generate}`);
+		if (generate?.output_text === undefined) throwFn(`Отсутствие поля ответа \n== ${generate}`);
 		const reply = generate.output_text;
 
 		console.log(text + "\n", reply);

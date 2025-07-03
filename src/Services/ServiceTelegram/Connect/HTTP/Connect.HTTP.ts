@@ -1,6 +1,7 @@
 import { ConnectInterface } from "../Connect.Interface";
 import { Readable } from "node:stream";
 import ConnectBase from "../Connect.base";
+import { throwFn } from "../../../../Utils";
 
 class ConnectHTTP extends ConnectBase {
 	private async parse(response: Response) {
@@ -19,7 +20,7 @@ class ConnectHTTP extends ConnectBase {
 				return { ok: true, result: nodeReadable };
 			}
 			default:
-				throw new Error(`Неизвестный тип для парсинга файла: ${contentType}`);
+				throwFn(`Неизвестный тип для парсинга файла: ${contentType}`);
 		}
 	}
 
@@ -41,7 +42,7 @@ class ConnectHTTP extends ConnectBase {
 
 			return url.toString();
 		} catch (e) {
-			throw new Error(`Ошибка создания ссылки \n== ${e}`);
+			throwFn(`Ошибка создания ссылки`, e);
 		}
 	}
 
@@ -56,7 +57,7 @@ class ConnectHTTP extends ConnectBase {
 		const res = await fetch(fullLink, { headers, body, method });
 		const response: ConnectInterface.TRes<T> = await this.parse(res);
 
-		if (!response.ok) throw new Error(`Запрос ${param.link} отвелил response.ok: ${response.ok}`);
+		if (!response.ok) throwFn(`Запрос ${param.link} отвелил response.ok: ${response.ok}`);
 
 		return response.result;
 	}

@@ -1,3 +1,5 @@
+import { throwFn } from "../Utils";
+
 class ServiceProxy<T extends object> {
 	protected readonly imp: T;
 	public readonly invoke: T;
@@ -14,7 +16,7 @@ class ServiceProxy<T extends object> {
 					const value = target[prop as keyof T];
 					return typeof value === "function" ? value.bind(target) : value;
 				}
-				throw new Error(`${String(prop)} вариант API не существует`);
+				throwFn(`${String(prop)} вариант API не существует`);
 			},
 		});
 	}

@@ -5,6 +5,7 @@ import { ProjectInterface } from "../../../DI/Project.interface";
 import { parseCommand } from "../Utils/ScriptParse";
 import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
+import { throwFn } from "../../../Utils";
 
 @RegisterDirective(OrchestratorTelegramInterface.EDirective.DEL_AUTH)
 class DeleteAuth implements OrchestratorTelegramInterface.IClass {
@@ -17,10 +18,10 @@ class DeleteAuth implements OrchestratorTelegramInterface.IClass {
 			const text = parseCommand(data.message?.text || "").text;
 			const deleteId = Number(text);
 
-			if (isNaN(deleteId)) throw new Error(`Ошибка парсинга id`);
+			if (isNaN(deleteId)) throwFn({ reasonUser: `Ошибка парсинга id` });
 
 			const isUserExist = modules("Auth").invoke.isAuthUser(deleteId, OrchestratorTelegramInterface.EDirective.SAY);
-			if (!isUserExist) throw new Error(wordUserNotFound);
+			if (!isUserExist) throwFn({ reasonUser: wordUserNotFound });
 
 			modules("Auth").invoke.removeUser(deleteId);
 			modules("Telegram")
@@ -29,7 +30,7 @@ class DeleteAuth implements OrchestratorTelegramInterface.IClass {
 					console.log(`DeleteAuth ${e}`);
 				});
 		} catch (e) {
-			throw new Error(`Ошибка удаления пользователя \n== ${e}`);
+			throwFn(`Ошибка удаления пользователя`, e);
 		}
 	}
 }

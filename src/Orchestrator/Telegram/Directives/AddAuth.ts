@@ -6,6 +6,7 @@ import { AuthInterface } from "../../../Services/ServiceAuth/Auth.interface";
 import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
 import { parseCommand } from "../Utils/ScriptParse";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
+import { throwFn } from "../../../Utils";
 
 @RegisterDirective(OrchestratorTelegramInterface.EDirective.ADD_AUTH)
 class AddAuth implements OrchestratorTelegramInterface.IClass {
@@ -19,8 +20,8 @@ class AddAuth implements OrchestratorTelegramInterface.IClass {
 		const addUserValid = Number(addedId);
 		const hoursAdd = Number(hours);
 
-		if (isNaN(addUserValid)) throw new Error(`Ошибка парсинга id`);
-		if (isNaN(hoursAdd)) throw new Error(`Ошибка парсинга даты`);
+		if (isNaN(addUserValid)) throwFn({ reasonUser: `Ошибка парсинга id` });
+		if (isNaN(hoursAdd)) throwFn({ reasonUser: `Ошибка парсинга даты` });
 
 		modules("Auth").invoke.addUserTime(addUserValid, +hours);
 

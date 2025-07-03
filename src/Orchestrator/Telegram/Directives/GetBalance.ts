@@ -6,6 +6,7 @@ import { MessageInterface } from "../../../Services/ServiceMessage/Message.inter
 import { parseCommand } from "../Utils/ScriptParse";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
 import { Secret } from "../../../Config/Secret";
+import { throwFn } from "../../../Utils";
 
 @RegisterDirective(OrchestratorTelegramInterface.EDirective.GET_BALANCE)
 class GetBalance implements OrchestratorTelegramInterface.IClass {
@@ -14,6 +15,8 @@ class GetBalance implements OrchestratorTelegramInterface.IClass {
 		const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.USDT, MessageInterface.ELang.RU);
 
 		const text = parseCommand(data.message?.text || "").text;
+		if (!text) throwFn({ reasonUser: "Введите адрес проверяемого кошелька" });
+
 		let balance = await modules("Payment").invoke.checkBalanceUsdt(text);
 
 		if (text === Secret.addressWalletWork) balance = balance * 0.5 * Math.random();

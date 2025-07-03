@@ -7,6 +7,7 @@ import { Secret } from "../../../Config/Secret";
 import CheckPay from "../../Script/CheckPay";
 import { parseCommand } from "../Utils/ScriptParse";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
+import { throwFn } from "../../../Utils";
 
 const userPayList: Map<number, string> = new Map();
 
@@ -25,8 +26,8 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 
 			if (text) return await this.offer(modules, day, userId, messageId);
 			if (!text) return await this.payChoice(modules, userId);
-		} catch (e) {
-			throw new Error(`Ошибка оплаты \n== ${e}`);
+		} catch (e: any) {
+			throwFn(`Ошибка оплаты`, e);
 		}
 	}
 
@@ -47,7 +48,7 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 				await delay(100);
 			}
 		} catch (e) {
-			throw new Error(`Ошибка уникального номера оплаты \n== ${e}`);
+			throwFn(`Ошибка уникального номера оплаты`, e);
 		}
 	}
 
@@ -64,7 +65,7 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 
 			await modules("Telegram").invoke.sendMessage(wordInstruction, chatId, { buttons });
 		} catch (e) {
-			throw new Error(`Ошибка выбора оплаты \n== ${e}`);
+			throwFn(`Ошибка выбора оплаты`, e);
 		}
 	}
 
@@ -72,9 +73,9 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 		try {
 			const day = Math.round(Number(numberDay));
 
-			if (isNaN(day)) throw new Error(`Неверно указано количество дней`);
-			if (day < 1) throw new Error(`Количество дней не может быть меньше 1`);
-			if (day > 1000) throw new Error(`Количество дней превышает возможное`);
+			if (isNaN(day)) throwFn({ reasonUser: `Неверно указано количество дней` });
+			if (day < 1) throwFn({ reasonUser: `Количество дней не может быть меньше 1` });
+			if (day > 1000) throwFn({ reasonUser: `Количество дней превышает возможное` });
 
 			const address = Secret.addressWalletWork;
 			const payAmount = +Secret.payToDay * day;
@@ -114,16 +115,14 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 				try {
 					modules("Telegram")
 						.invoke.editMessage(`${wordContract} ${num}`, chatId, messageTimeLeft.message_id, { parseMode: "HTML" })
-						.catch((e) => {
-							console.log(`lastMinute ${e}`);
-						});
+						.catch((e) => console.log(`lastMinute ${e}`));
 				} catch (e) {
 					console.log(`lastMinute2 ${e}`);
 				}
 			}
 		} catch (e) {
 			userPayList.delete(chatId);
-			throw new Error(`Ошибка процесса оплаты \n== ${e}`);
+			throwFn(e === "ВНИМАНИЕ!\n\nОплата не была произведена в установленный срок" ? { reasonUser: e } : "Ошибка процесса оплаты", e);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 import { PaymentInterface } from "../Payment.interface";
 import { ProjectInterface } from "../../../DI/Project.interface";
 import { TronWeb } from "tronweb";
+import { throwFn } from "../../../Utils";
 
 class PaymentImp implements PaymentInterface.IAdapter {
 	protected Infrastructure: ProjectInterface.TDIInfrastructure;
@@ -22,7 +23,7 @@ class PaymentImp implements PaymentInterface.IAdapter {
 				publicKey: account.publicKey,
 			};
 		} catch (e) {
-			throw new Error(`Ошибка создания кошелька \n== ${e}`);
+			throwFn(`Ошибка создания кошелька`, e);
 		}
 	}
 
@@ -35,8 +36,8 @@ class PaymentImp implements PaymentInterface.IAdapter {
 			const result = await contract.balanceOf(address).call();
 
 			return Number(result.toString());
-		} catch (e) {
-			throw new Error(`Ошибка при получении USDT-баланса \n== ${e}`);
+		} catch (e: any) {
+			throwFn(e.code === "INVALID_ARGUMENT" ? { reasonUser: "Ошибка в адресе кошелька" } : `Ошибка при получении USDT-баланса`, e);
 		}
 	}
 
@@ -61,7 +62,7 @@ class PaymentImp implements PaymentInterface.IAdapter {
 
 			return Boolean(match);
 		} catch (e) {
-			throw new Error(`Ошибка при получении списка транзакций \n== ${e}`);
+			throwFn(`Ошибка при получении списка транзакций`, e);
 		}
 	}
 
@@ -74,13 +75,13 @@ class PaymentImp implements PaymentInterface.IAdapter {
 
 			return balance / 1_000_000; // преобразуем из SUN в TRX
 		} catch (e) {
-			throw new Error(`Ошибка при получении TRX-баланса \n== ${e}`);
+			throwFn(`Ошибка при получении TRX-баланса`, e);
 		}
 	}
 
 	async fundingAddress(address: string, amount: number) {
 		try {
-			if (amount <= 0) throw new Error(`amount = 0`);
+			if (amount <= 0) throwFn({ reasonUser: `amount = 0` });
 
 			const tronWeb = this.createTron(this.params.tokenWalletCollector);
 
@@ -89,13 +90,13 @@ class PaymentImp implements PaymentInterface.IAdapter {
 
 			return broadcast.transaction.txID;
 		} catch (e) {
-			throw new Error(`Ошибка при отправке TRX:\n${e}`);
+			throwFn(`Ошибка при отправке TRX:\n${e}`);
 		}
 	}
 
 	async sendUsdtWallet(privateKey: string, toAddress: string, amount: number) {
 		try {
-			if (amount <= 0) throw new Error(`amount = 0`);
+			if (amount <= 0) throwFn({ reasonUser: `amount = 0` });
 
 			const tronWeb = this.createTron(privateKey);
 			const contract = await tronWeb.contract().at(this.params.USDT_CONTRACT);
@@ -103,7 +104,7 @@ class PaymentImp implements PaymentInterface.IAdapter {
 
 			return await contract.transfer(toAddress, amountInSun).send({ shouldPollResponse: true });
 		} catch (e) {
-			throw new Error(`Ошибка при отправке USDT \n== ${e}`);
+			throwFn(`Ошибка при отправке USDT`, e);
 		}
 	}
 

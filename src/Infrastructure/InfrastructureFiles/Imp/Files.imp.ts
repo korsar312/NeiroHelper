@@ -4,6 +4,7 @@ import { promises as fs } from "fs";
 import { createReadStream } from "node:fs";
 import readline from "node:readline";
 import readXlsxFile from "read-excel-file/node";
+import { throwFn } from "../../../Utils";
 
 class FilesImp implements FilesInterface.IAdapter {
 	private async ensureDir(dirPath: string): Promise<void> {
@@ -51,7 +52,7 @@ class FilesImp implements FilesInterface.IAdapter {
 			case FilesInterface.EFormat.JSONL:
 				return await this.ndJsonParse(dirPath);
 			default:
-				throw new Error(`Неизвестный тип для чтения файла: ${params.format}`);
+				throwFn(`Неизвестный тип для чтения файла: ${params.format}`);
 		}
 	}
 

@@ -1,17 +1,7 @@
-/**
- * Преобразует массив массивов в CSV-строку.
- * Первый вложенный массив считается заголовками столбцов.
- *
- * @param data - Массив строк, каждая строка — массив ячеек (string | number)
- * @param delimiter - Разделитель полей (по умолчанию ',')
- * @returns CSV-представление переданных данных
- */
 export function listOfListsToCsv(data: Array<Array<string | number>>, delimiter: string = ","): string {
 	const escapeCell = (cell: string | number): string => {
 		const str = String(cell);
-		// Если в ячейке есть кавычки, запятые, переносы строк — оборачиваем в двойные кавычки
 		if (/[\"\r\n${delimiter}]/.test(str)) {
-			// Экранируем все двойные кавычки внутри ячейки
 			const escaped = str.replace(/"/g, '""');
 			return `"${escaped}"`;
 		}
@@ -19,4 +9,26 @@ export function listOfListsToCsv(data: Array<Array<string | number>>, delimiter:
 	};
 
 	return data.map((row) => row.map(escapeCell).join(delimiter)).join("\n");
+}
+
+export interface IThrow {
+	error: string;
+	reasonUser: string;
+}
+
+export function throwFn(error: string | { reasonUser: string }, lairError?: unknown): never {
+	let reason = {
+		error: JSON.stringify(error) + JSON.stringify(lairError),
+		reasonUser: "",
+	};
+
+	if (typeof error === "object" && "reasonUser" in error) {
+		reason.reasonUser += error.reasonUser;
+	}
+
+	if (typeof lairError === "object" && lairError !== null && "reasonUser" in lairError) {
+		reason.reasonUser += lairError.reasonUser;
+	}
+
+	throw reason;
 }

@@ -5,6 +5,7 @@ import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.in
 import { parseCommand } from "../Utils/ScriptParse";
 import { ProjectInterface } from "../../../DI/Project.interface";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
+import { throwFn } from "../../../Utils";
 
 @RegisterDirective(OrchestratorTelegramInterface.EDirective.LEARN)
 class Learn implements OrchestratorTelegramInterface.IClass {
@@ -15,7 +16,7 @@ class Learn implements OrchestratorTelegramInterface.IClass {
 			if (data.message?.text) return await this.text(modules, parseCommand(data.message.text).text, chatId);
 			if (data.message?.document) return await this.file(modules, data.message.document, chatId);
 		} catch (e) {
-			throw new Error(`Ошибка сохранения \n== ${e}`);
+			throwFn(`Ошибка сохранения`, e);
 		}
 	}
 

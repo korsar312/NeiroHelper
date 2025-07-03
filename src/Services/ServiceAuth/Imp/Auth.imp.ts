@@ -1,6 +1,7 @@
 import { AuthInterface } from "../Auth.interface";
 import { ProjectInterface } from "../../../DI/Project.interface";
 import { OrchestratorTelegramInterface } from "../../../Orchestrator/Telegram/OrchestratorTelegram.interface";
+import { throwFn } from "../../../Utils";
 
 const allAccess = [
 	OrchestratorTelegramInterface.EDirective.START,
@@ -95,7 +96,7 @@ class AuthImp implements AuthInterface.IAdapter {
 		const user = this.Infrastructure("DB").invoke.read.grade(userId);
 		const userRole = user?.role as AuthInterface.EGrade;
 
-		if (userRole === AuthInterface.EGrade.SUPER) throw new Error(`Невозможно удалить Super пользователя`);
+		if (userRole === AuthInterface.EGrade.SUPER) throwFn({ reasonUser: `Невозможно удалить Super пользователя` });
 		this.Infrastructure("DB").invoke.delete.grade(userId);
 	}
 }
