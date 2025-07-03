@@ -76,12 +76,15 @@ export namespace TelegramInterface {
 	}
 
 	export interface IMessageOptions {
-		buttons?: TButton[];
+		buttons?: TButton;
 		parseMode?: "HTML";
 	}
 
-	export type TButton = {
+	export type TButtonEl = {
 		text: string;
-		click: string;
+		click?: string;
+		url?: string;
 	};
+
+	export type TButton = Array<TButtonEl[]>;
 }

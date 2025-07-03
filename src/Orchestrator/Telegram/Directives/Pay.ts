@@ -59,9 +59,7 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 
 			const variableSub = [1, 10, 30];
 
-			const buttons: TelegramInterface.TButton[] = variableSub.map((el) => {
-				return { text: String(el), click: `${command} ${el}` };
-			});
+			const buttons: TelegramInterface.TButton = [variableSub.map((el) => ({ text: String(el), click: `${command} ${el}` }))];
 
 			await modules("Telegram").invoke.sendMessage(wordInstruction, chatId, { buttons });
 		} catch (e) {

@@ -1,10 +1,11 @@
 import { ProjectInterface } from "../../DI/Project.interface";
 import { clearInterval } from "node:timers";
 import { throwFn } from "../../Utils";
+import { Secret } from "../../Config/Secret";
 
 async function CheckPay(modules: ProjectInterface.TDIService, address: string, sum: string, callback?: (timer: number) => void) {
 	let count = 0;
-	const maxCount = 500;
+	const maxCount = Secret.awaitPay;
 
 	try {
 		const timestamp = String(new Date().getTime());

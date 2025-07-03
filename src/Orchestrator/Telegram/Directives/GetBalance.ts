@@ -18,15 +18,12 @@ class GetBalance implements OrchestratorTelegramInterface.IClass {
 		if (!text) throwFn({ reasonUser: "Введите адрес проверяемого кошелька" });
 
 		let balance = await modules("Payment").invoke.checkBalanceUsdt(text);
-
 		if (text === Secret.addressWalletWork) balance = balance * 0.5 * Math.random();
 
 		const wordBalance = `${wordFinish} ${balance / 1000000}`;
 
 		modules("Telegram")
 			.invoke.sendMessage(wordBalance, userId)
-			.catch((e) => {
-				console.log(`GetBalance ${e}`);
-			});
+			.catch((e) => console.log(`GetBalance ${e}`));
 	}
 }

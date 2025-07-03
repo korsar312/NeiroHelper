@@ -13,4 +13,6 @@ export const Secret = {
 	usdtContract: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
 	payToDay: process.env.PAY_TO_DAY || 100,
 	historyQty: 20,
+	awaitPay: 500,
+	chanelTg: "https://t.me/+SP3R7ofDDhYyZGZi",
 };

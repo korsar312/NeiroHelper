@@ -1,6 +1,15 @@
 import { MessageInterface } from "../Message.interface";
 
 const Dictionary: MessageInterface.TDictionary = {
+	CHANNEL_LINK: {
+		RU: "Канал с новостями",
+	},
+	BUY_BOT_SUBSCRIBE: {
+		RU: "Приобрести подписку на бота",
+	},
+	JOIN_CHANEL: {
+		RU: "Вступай в канал, чтобы следить за новостями и обновлениями!",
+	},
 	PAY_THROTTLE: {
 		RU: "Обработка транзакции занимает от 1 до 3 минут",
 	},
@@ -8,7 +17,7 @@ const Dictionary: MessageInterface.TDictionary = {
 		RU: "TRC20",
 	},
 	MAJOR_INSTRUCTION: {
-		RU: "Чтобы вставить команду в поле ввода Telegram, нажмите и удерживайте её в меню команд.",
+		RU: "Чтобы вставить команду в поле ввода:\n— на телефоне: нажмите и удерживайте её в меню команд;\n— на компьютере: наведите на нужную и нажмите Tab.",
 	},
 	MAJOR_HELLO: {
 		RU: "Добро пожаловать в бота!",
@@ -39,6 +48,9 @@ const Dictionary: MessageInterface.TDictionary = {
 	},
 	BALANCE_DISC: {
 		RU: "Узнать балланс USDT. Через пробел адрес кошелька",
+	},
+	START_DISC: {
+		RU: "Общая информация",
 	},
 	PAY_DISC: {
 		RU: "Оплата подписки. Через пробел число дней",
