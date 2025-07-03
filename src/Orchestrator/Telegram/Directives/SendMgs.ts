@@ -10,7 +10,7 @@ class SendMgs implements OrchestratorTelegramInterface.IClass {
 		const text = parseCommand(data.message?.text || "").text;
 		const [id, ...word] = text.split(" ");
 
-		const isUserExist = modules("Auth").invoke.isAuthUser(+id, OrchestratorTelegramInterface.EDirective.SAY);
+		const isUserExist = modules("Auth").invoke.isAuthUser(+id, OrchestratorTelegramInterface.EDirective.START);
 		if (!isUserExist) return;
 
 		await modules("Telegram").invoke.sendMessage(word.join(" "), +id);
