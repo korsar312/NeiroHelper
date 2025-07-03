@@ -5,6 +5,7 @@ export namespace MessageInterface {
 	}
 
 	export enum EWord {
+		CASH_OUT = "CASH_OUT",
 		CHANNEL_LINK = "CHANNEL_LINK",
 		BUY_BOT_SUBSCRIBE = "BUY_BOT_SUBSCRIBE",
 		JOIN_CHANEL = "JOIN_CHANEL",

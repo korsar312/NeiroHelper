@@ -40,12 +40,9 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 				const formatFullPrice = formatMicroUsdt(fullPrice);
 
 				const isTaken = Array.from(userPayList.values()).some((el) => el === formatFullPrice);
+				if (!isTaken) return formatFullPrice;
 
-				if (!isTaken) {
-					return formatFullPrice;
-				}
-
-				await delay(100);
+				await delay(200);
 			}
 		} catch (e) {
 			throwFn(`Ошибка уникального номера оплаты`, e);
@@ -69,6 +66,8 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 
 	async offer(modules: ProjectInterface.TDIService, numberDay: number | string, chatId: number, messageId?: number) {
 		try {
+			userPayList.set(chatId, "");
+
 			const day = Math.round(Number(numberDay));
 
 			if (isNaN(day)) throwFn({ reasonUser: `Неверно указано количество дней` });

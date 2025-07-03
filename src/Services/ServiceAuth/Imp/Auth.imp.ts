@@ -18,6 +18,7 @@ const adminAccess = [
 	OrchestratorTelegramInterface.EDirective.DEL_AUTH,
 	OrchestratorTelegramInterface.EDirective.ADD_AUTH,
 	OrchestratorTelegramInterface.EDirective.SEND_MASSAGE,
+	OrchestratorTelegramInterface.EDirective.CASH_OUT,
 ];
 
 class AuthImp implements AuthInterface.IAdapter {

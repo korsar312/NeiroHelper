@@ -1,6 +1,9 @@
 import { MessageInterface } from "../Message.interface";
 
 const Dictionary: MessageInterface.TDictionary = {
+	CASH_OUT: {
+		RU: "Инкассация завершена:",
+	},
 	CHANNEL_LINK: {
 		RU: "Канал с новостями",
 	},

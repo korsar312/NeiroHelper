@@ -100,7 +100,7 @@ class PaymentImp implements PaymentInterface.IAdapter {
 
 			const tronWeb = this.createTron(privateKey);
 			const contract = await tronWeb.contract().at(this.params.USDT_CONTRACT);
-			const amountInSun = tronWeb.toBigNumber(amount).multipliedBy(tronWeb.toBigNumber(10).pow(6)).toFixed(0);
+			const amountInSun = tronWeb.BigNumber(amount).multipliedBy(tronWeb.toBigNumber(10).pow(6)).toFixed(0);
 
 			return await contract.transfer(toAddress, amountInSun).send({ shouldPollResponse: true });
 		} catch (e) {

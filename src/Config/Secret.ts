@@ -14,5 +14,6 @@ export const Secret = {
 	payToDay: process.env.PAY_TO_DAY || 100,
 	historyQty: 20,
 	awaitPay: 500,
+	superPartPercent: 25,
 	chanelTg: "https://t.me/+SP3R7ofDDhYyZGZi",
 };
