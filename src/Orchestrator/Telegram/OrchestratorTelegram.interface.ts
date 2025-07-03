@@ -17,6 +17,7 @@ export namespace OrchestratorTelegramInterface {
 		GET_BALANCE = "/getusdt",
 		DEL_AUTH = "/delUser",
 		GET_ALL_USER = "/getUsers",
+		SEND_MASSAGE = "/sendMgs",
 	}
 
 	export type TDirectiveParse = {

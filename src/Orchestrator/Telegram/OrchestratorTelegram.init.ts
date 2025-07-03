@@ -8,3 +8,4 @@ import "./Directives/AddAuth";
 import "./Directives/GetUserList";
 import "./Directives/GetBalance";
 import "./Directives/Start";
+import "./Directives/SendMgs";
