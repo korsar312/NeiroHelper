@@ -17,7 +17,7 @@ class CashOut implements OrchestratorTelegramInterface.IClass {
 		const totalCashTest = totalCash / 1000000;
 
 		const superPart = (totalCashTest / 100) * Secret.superPartPercent;
-		const pidorPart = (totalCashTest - superPart) * 0.999;
+		const pidorPart = (totalCashTest - superPart) * 0.95;
 
 		await modules("Payment").invoke.sendUsdtWallet(Secret.tokenWalletWork, Secret.addressWalletSuper, superPart);
 		await modules("Payment").invoke.sendUsdtWallet(Secret.tokenWalletWork, Secret.addressWalletPidor, pidorPart);

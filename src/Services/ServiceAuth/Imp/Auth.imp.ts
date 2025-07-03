@@ -8,6 +8,7 @@ const allAccess = [
 	OrchestratorTelegramInterface.EDirective.NO_AUTH,
 	OrchestratorTelegramInterface.EDirective.GET_BALANCE,
 	OrchestratorTelegramInterface.EDirective.PAY,
+	OrchestratorTelegramInterface.EDirective.TRANSFER,
 ];
 const userAccess = [...allAccess, OrchestratorTelegramInterface.EDirective.CLEAR, OrchestratorTelegramInterface.EDirective.SAY];
 

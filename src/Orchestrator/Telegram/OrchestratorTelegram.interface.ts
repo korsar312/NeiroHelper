@@ -15,6 +15,7 @@ export namespace OrchestratorTelegramInterface {
 		START = "/start",
 		ADD_AUTH = "/addUser",
 		CASH_OUT = "/cashOut",
+		TRANSFER = "/transfer",
 		GET_BALANCE = "/getusdt",
 		DEL_AUTH = "/delUser",
 		GET_ALL_USER = "/getUsers",

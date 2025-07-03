@@ -10,3 +10,4 @@ import "./Directives/GetBalance";
 import "./Directives/Start";
 import "./Directives/SendMgs";
 import "./Directives/CashOut";
+import "./Directives/Trans";
