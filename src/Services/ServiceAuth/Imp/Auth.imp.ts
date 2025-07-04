@@ -43,8 +43,8 @@ class AuthImp implements AuthInterface.IAdapter {
 		const isSuper = userRole === AuthInterface.EGrade.SUPER;
 
 		console.log("=============");
-		console.log(new Date());
-		console.log(new Date(userTimeMs));
+		console.log(new Date().toLocaleDateString("ru-RU"));
+		console.log(new Date(userTimeMs).toLocaleDateString("ru-RU"));
 		console.log(userId);
 		console.log(userRole);
 		console.log(command);

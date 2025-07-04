@@ -28,7 +28,6 @@ class OrchestratorTelegram extends OrchestratorBase {
 			const payDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.PAY_DISC, MessageInterface.ELang.RU);
 			const startDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.START_DISC, MessageInterface.ELang.RU);
 			const clearDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.CLEAR_DISC, MessageInterface.ELang.RU);
-			const balanceDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.BALANCE_DISC, MessageInterface.ELang.RU);
 
 			await this.module("Telegram").invoke.setCommand([
 				{ command: PAY, description: payDisc },
@@ -72,6 +71,11 @@ class OrchestratorTelegram extends OrchestratorBase {
 		try {
 			const text = update.message?.text || update.message?.caption || update.callback_query?.data || "";
 			let { command } = parseCommand(text);
+
+			console.log("<>");
+			console.log(text);
+			console.log(id);
+			console.log("</>");
 
 			const isAuth = this.module("Auth").invoke.isAuthUser(id, command);
 			if (!isAuth) command = OrchestratorTelegramInterface.EDirective.NO_AUTH;
