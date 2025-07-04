@@ -10,6 +10,7 @@ import { scriptGetChatId } from "../Utils/ScriptGetChatId";
 import { throwFn } from "../../../Utils";
 
 const userPayList: Map<number, string> = new Map();
+const forever = "Пожизненно";
 
 @RegisterDirective(OrchestratorTelegramInterface.EDirective.PAY)
 class Pay implements OrchestratorTelegramInterface.IClass {
@@ -24,6 +25,7 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 
 			const day = isNaN(+text) ? 10 : +text;
 
+			if (text === forever) return await this.offerForever(modules, userId, messageId);
 			if (text) return await this.offer(modules, day, userId, messageId);
 			if (!text) return await this.payChoice(modules, userId);
 		} catch (e: any) {
@@ -54,7 +56,7 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			const wordInstruction = modules("Message").invoke.getWord(MessageInterface.EWord.CHOICE_PAY_DAY, MessageInterface.ELang.RU);
 			const command = OrchestratorTelegramInterface.EDirective.PAY;
 
-			const variableSub = [1, 10, 30];
+			const variableSub = [1, 10, 30, forever];
 
 			const buttons: TelegramInterface.TButton = [variableSub.map((el) => ({ text: String(el), click: `${command} ${el}` }))];
 
@@ -94,6 +96,61 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			]);
 
 			const wordContract = `${wordInstruction}\n\n${wordThrottle}\n\n${wordAddress}\n<code>${address}</code>\n\n${wordSum}\n<code>${formatFullPrise}</code>\n\n${SubPeriod}\n${day}\n\n${wordMinute}`;
+
+			const messageTimeLeft = messageId
+				? await modules("Telegram").invoke.editMessage(wordContract, chatId, messageId, { parseMode: "HTML" })
+				: await modules("Telegram").invoke.sendMessage(wordContract, chatId, { parseMode: "HTML" });
+
+			await CheckPay(modules, address, formatFullPrise, lastMinute);
+
+			const subscribeAfter = modules("Auth").invoke.addUserTime(chatId, day * 24);
+			const wordSubscribe = `${wordFinish} ${new Date(subscribeAfter).toLocaleDateString("ru-RU")}`;
+
+			await modules("Telegram").invoke.sendMessage(wordSubscribe, chatId);
+
+			userPayList.delete(chatId);
+
+			function lastMinute(num: number) {
+				try {
+					modules("Telegram")
+						.invoke.editMessage(`${wordContract} ${num}`, chatId, messageTimeLeft.message_id, { parseMode: "HTML" })
+						.catch((e) => console.log(`lastMinute ${e}`));
+				} catch (e) {
+					console.log(`lastMinute2 ${e}`);
+				}
+			}
+		} catch (e) {
+			userPayList.delete(chatId);
+			throwFn(e === "ВНИМАНИЕ!\n\nОплата не была произведена в установленный срок" ? { reasonUser: e } : "Ошибка процесса оплаты", e);
+		}
+	}
+
+	async offerForever(modules: ProjectInterface.TDIService, chatId: number, messageId?: number) {
+		try {
+			userPayList.set(chatId, "");
+
+			const day = Math.round(Number(9999));
+
+			const address = Secret.addressWalletWork;
+			const payAmount = 9999;
+
+			const formatFullPrise = await this.getUniqSum(payAmount);
+			userPayList.set(chatId, formatFullPrise);
+
+			const wordTRC20 = modules("Message").invoke.getWord(MessageInterface.EWord.TRC20, MessageInterface.ELang.RU);
+			const wordThrottle = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_THROTTLE, MessageInterface.ELang.RU);
+			const wordAddress = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_ADDRESS, MessageInterface.ELang.RU);
+			const wordSum = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_SUM, MessageInterface.ELang.RU);
+			const wordMinute = modules("Message").invoke.getWord(MessageInterface.EWord.TIME_LEFT, MessageInterface.ELang.RU);
+			const SubPeriod = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_PERIOD, MessageInterface.ELang.RU);
+			const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_COMPLETE, MessageInterface.ELang.RU);
+			const wordInstruction = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_INSTRUCTION, MessageInterface.ELang.RU, [
+				`<b>(${forever})</b>`,
+				`<b>${formatFullPrise}</b>`,
+				`<b>${wordTRC20}</b>`,
+			]);
+
+			const wordContract = `${wordInstruction}\n\n${wordThrottle}\n\n${wordAddress}\n<code>${address}</code>\n\n${wordSum}\n<code>${formatFullPrise}</code>\n\n${SubPeriod}\n${forever}\n\n${wordMinute}`;
 
 			const messageTimeLeft = messageId
 				? await modules("Telegram").invoke.editMessage(wordContract, chatId, messageId, { parseMode: "HTML" })
