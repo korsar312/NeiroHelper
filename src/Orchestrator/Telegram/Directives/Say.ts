@@ -33,6 +33,8 @@ class Say implements OrchestratorTelegramInterface.IClass {
 		console.log(text + "\n", reply);
 
 		await modules("History").invoke.setHistory(chatId, new Date().getTime(), text, reply);
-		await modules("Telegram").invoke.editMessage(reply, chatId, message.message_id);
+
+		const chunks = reply.match(/[\s\S]{1,4000}(?=\s|$)/g) || [];
+		for (const chunk of chunks) await modules("Telegram").invoke.sendMessage(chunk, chatId);
 	}
 }

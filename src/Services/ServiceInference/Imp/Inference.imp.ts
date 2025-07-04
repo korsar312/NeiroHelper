@@ -46,7 +46,7 @@ class InferenceImp implements InferenceInterface.IAdapter {
 			temperature: 1,
 
 			/** Максимальное число токенов, которое модель может выдать в ответе */
-			max_output_tokens: 2048,
+			max_output_tokens: 2500,
 
 			/** Вероятность подбора редких слов. 0 - высокая вероятность */
 			top_p: 1,

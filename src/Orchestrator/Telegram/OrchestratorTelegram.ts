@@ -34,7 +34,6 @@ class OrchestratorTelegram extends OrchestratorBase {
 				{ command: PAY, description: payDisc },
 				{ command: START, description: startDisc },
 				{ command: CLEAR, description: clearDisc },
-				{ command: GET_BALANCE, description: balanceDisc },
 			]);
 		} catch (e) {
 			console.log(`Ошибка инициализации \n== ${e}`);

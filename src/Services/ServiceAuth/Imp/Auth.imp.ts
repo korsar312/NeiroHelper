@@ -6,7 +6,6 @@ import { throwFn } from "../../../Utils";
 const allAccess = [
 	OrchestratorTelegramInterface.EDirective.START,
 	OrchestratorTelegramInterface.EDirective.NO_AUTH,
-	OrchestratorTelegramInterface.EDirective.GET_BALANCE,
 	OrchestratorTelegramInterface.EDirective.PAY,
 	OrchestratorTelegramInterface.EDirective.TRANSFER,
 ];
@@ -14,6 +13,7 @@ const userAccess = [...allAccess, OrchestratorTelegramInterface.EDirective.CLEAR
 
 const adminAccess = [
 	...userAccess,
+	OrchestratorTelegramInterface.EDirective.GET_BALANCE,
 	OrchestratorTelegramInterface.EDirective.LEARN,
 	OrchestratorTelegramInterface.EDirective.GET_ALL_USER,
 	OrchestratorTelegramInterface.EDirective.DEL_AUTH,

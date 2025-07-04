@@ -5,6 +5,7 @@ import { Secret } from "../../Config/Secret";
 
 async function CheckPay(modules: ProjectInterface.TDIService, address: string, sum: string, callback?: (timer: number) => void) {
 	let count = 0;
+	let isCircle = true;
 	const maxCount = Secret.awaitPay;
 
 	try {
@@ -18,13 +19,14 @@ async function CheckPay(modules: ProjectInterface.TDIService, address: string, s
 
 				if (count > maxCount) {
 					clearInterval(tick);
+					isCircle = false;
 					reject("ВНИМАНИЕ!\n\nОплата не была произведена в установленный срок");
 				}
 
 				count % 10 === 0 && callback?.(maxCount - count);
 			}, 1000);
 
-			while (true) {
+			while (isCircle) {
 				const isExist = await modules("Payment")
 					.invoke.isExistTransaction(address, timestamp, sum)
 					.catch((e) => console.log(`isExist ${e}`));
@@ -32,6 +34,8 @@ async function CheckPay(modules: ProjectInterface.TDIService, address: string, s
 				if (isExist) {
 					clearInterval(tick);
 					resolve(true);
+
+					break;
 				}
 
 				await new Promise((res) => setTimeout(res, 10000));
