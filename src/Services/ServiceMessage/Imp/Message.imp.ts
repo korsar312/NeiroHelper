@@ -21,20 +21,39 @@ class MessageImp implements MessageInterface.IAdapter {
 	}
 
 	public async getSystemPromt() {
-		const instruct = await this.Infrastructure("Files").invoke.readFile<string>(FilesInterface.FilePath.INSTRUCTION());
-		const context = await this.Infrastructure("Files").invoke.readFile<string>(FilesInterface.FilePath.CONTEXT());
-		const statistic = await this.Infrastructure("Files").invoke.readFile<Array<Array<string>>>(FilesInterface.FilePath.STATISTIC());
-
-		const statText = listOfListsToCsv(statistic);
+		const instruct = await this.getSystemMassage();
+		const context = await this.getSystemContext();
+		const statistic = await this.getSystemStat();
 
 		return `
-${instruct}
+			${instruct}
+			
+			${context}
+			
+			${statistic}
+		`;
+	}
 
-[CONTEXT]
-${context}
+	public async getSystemMassage() {
+		return await this.Infrastructure("Files").invoke.readFile<string>(FilesInterface.FilePath.INSTRUCTION());
+	}
 
-[STATISTIC]
-${statText}
+	public async getSystemContext() {
+		const context = await this.Infrastructure("Files").invoke.readFile<string>(FilesInterface.FilePath.CONTEXT());
+
+		return `
+			[CONTEXT]
+			${context}
+		`;
+	}
+
+	public async getSystemStat() {
+		const stat = await this.Infrastructure("Files").invoke.readFile<Array<Array<string>>>(FilesInterface.FilePath.STATISTIC());
+		const textStat = listOfListsToCsv(stat);
+
+		return `
+			[STATISTIC]
+			${textStat}
 		`;
 	}
 }

@@ -12,7 +12,7 @@ class InferenceImp implements InferenceInterface.IAdapter {
 		this.Infrastructure = Infrastructure;
 	}
 
-	public async getPromt(question: string, instructions: string, history: InferenceInterface.THistoryField[]) {
+	public async getPromt(question: string, instructions: string, context: string, history: InferenceInterface.THistoryField[]) {
 		const historyPrompt: InferenceInterface.IDialog = history.reduce((prev, cur) => {
 			const user = createInput("user", cur.question);
 			const assistant = createInput("assistant", cur.answer);
@@ -24,6 +24,7 @@ class InferenceImp implements InferenceInterface.IAdapter {
 		}, [] as InferenceInterface.IDialog);
 
 		const systemPrompt = createInput("system", instructions);
+		const contextPrompt = createInput("developer", context);
 		const userPrompt = createInput("user", question);
 
 		return this.client?.responses.create({
@@ -31,7 +32,7 @@ class InferenceImp implements InferenceInterface.IAdapter {
 			model: "gpt-4.1-mini",
 
 			/** Список сообщений, передаваемых в модель в данном запросе */
-			input: [systemPrompt, ...historyPrompt, userPrompt],
+			input: [systemPrompt, contextPrompt, ...historyPrompt, userPrompt],
 
 			/** Определяет формат вывода ответа */
 			text: { format: { type: "text" } },
@@ -43,7 +44,7 @@ class InferenceImp implements InferenceInterface.IAdapter {
 			tools: [],
 
 			/** Параметр, отвечающий за «творческую свободу» генерации. 0 - нет свободы */
-			temperature: 1,
+			temperature: 0.7,
 
 			/** Максимальное число токенов, которое модель может выдать в ответе */
 			max_output_tokens: 2500,
