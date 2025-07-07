@@ -59,7 +59,6 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			const command = OrchestratorTelegramInterface.EDirective.PAY;
 
 			const variableSub = [1, 10, 30, forever];
-
 			const buttons: TelegramInterface.TButton = [variableSub.map((el) => ({ text: String(el), click: `${command} ${el}` }))];
 
 			await modules("Telegram").invoke.sendMessage(wordInstruction, chatId, { buttons });
@@ -101,7 +100,18 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 				`<b>${wordTRC20}</b>`,
 			]);
 
-			const wordContract = `${wordInstruction}\n\n${wordThrottle}\n\n${wordAddress}\n<code>${address}</code>\n\n${wordSum}\n<code>${formatFullPrise}</code>\n\n${SubPeriod}\n${forever}\n\n${wordMinute}`;
+			const wordContract = `
+${wordInstruction}\n
+${wordThrottle}\n
+${wordAddress}
+<code>${address}</code>\n
+${wordSum}
+<code>${formatFullPrise}</code>\n
+${SubPeriod}
+${isInfinity ? forever : day}\n
+${wordMinute}
+`;
+
 			const command = OrchestratorTelegramInterface.EDirective.PAY;
 
 			const options: TelegramInterface.IMessageOptions = {
