@@ -24,7 +24,7 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			const text = parseCommand(data.message?.text || data.callback_query?.data).text;
 			const messageId = data.callback_query?.message.message_id;
 
-			if (text === cancel) return await this.cancelPay(userId);
+			if (text === cancel) return await this.cancelPay(modules, userId, messageId);
 
 			if (userPayList.has(userId)) return;
 
@@ -136,17 +136,20 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			}
 		} catch (e) {
 			userPayList.delete(chatId);
-			throwFn(
-				e === "ВНИМАНИЕ!\n\nОплата не была произведена в установленный срок" || e === "Оплата была отменена пользователем"
-					? { reasonUser: e }
-					: "Ошибка процесса оплаты",
-				e,
-			);
+
+			if (e !== 801) {
+				throwFn(e === 802 ? { reasonUser: "ВНИМАНИЕ!\n\nОплата не была произведена в установленный срок" } : "Ошибка процесса оплаты", e);
+			}
 		}
 	}
 
-	async cancelPay(chatId: number) {
+	async cancelPay(modules: ProjectInterface.TDIService, chatId: number, messageId?: number) {
 		abortFn.get(chatId)?.abort();
+		const wordCancel = "Оплата была отменена пользователем";
+
+		messageId
+			? await modules("Telegram").invoke.editMessage(wordCancel, chatId, messageId)
+			: await modules("Telegram").invoke.sendMessage(wordCancel, chatId);
 	}
 }
 

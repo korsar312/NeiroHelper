@@ -23,7 +23,7 @@ async function CheckPay(
 			abortFn?.addEventListener("abort", () => {
 				clearInterval(tick);
 				isCircle = false;
-				reject("Оплата была отменена пользователем");
+				reject(801);
 			});
 
 			const tick = setInterval(() => {
@@ -32,7 +32,7 @@ async function CheckPay(
 				if (count > maxCount) {
 					clearInterval(tick);
 					isCircle = false;
-					reject("ВНИМАНИЕ!\n\nОплата не была произведена в установленный срок");
+					reject(802);
 				}
 
 				count % 10 === 0 && callback?.(maxCount - count);
