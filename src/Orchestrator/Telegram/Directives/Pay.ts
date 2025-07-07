@@ -10,7 +10,10 @@ import { scriptGetChatId } from "../Utils/ScriptGetChatId";
 import { throwFn } from "../../../Utils";
 
 const userPayList: Map<number, string> = new Map();
+const abortFn = new Map<number, AbortController>();
+
 const forever = "Пожизненно";
+const cancel = "cancel";
 
 @RegisterDirective(OrchestratorTelegramInterface.EDirective.PAY)
 class Pay implements OrchestratorTelegramInterface.IClass {
@@ -18,15 +21,14 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 		try {
 			const userId = scriptGetChatId(data);
 
-			if (userPayList.has(userId)) return;
-
 			const text = parseCommand(data.message?.text || data.callback_query?.data).text;
 			const messageId = data.callback_query?.message.message_id;
 
-			const day = isNaN(+text) ? 10 : +text;
+			if (text === cancel) return await this.cancelPay(userId);
 
-			if (text === forever) return await this.offerForever(modules, userId, messageId);
-			if (text) return await this.offer(modules, day, userId, messageId);
+			if (userPayList.has(userId)) return;
+
+			if (text) return await this.offer(modules, text, userId, messageId);
 			if (!text) return await this.payChoice(modules, userId);
 		} catch (e: any) {
 			throwFn(`Ошибка оплаты`, e);
@@ -70,69 +72,18 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 		try {
 			userPayList.set(chatId, "");
 
-			const day = Math.round(Number(numberDay));
+			const isInfinity = numberDay === forever;
 
-			if (isNaN(day)) throwFn({ reasonUser: `Неверно указано количество дней` });
-			if (day < 1) throwFn({ reasonUser: `Количество дней не может быть меньше 1` });
-			if (day > 1000) throwFn({ reasonUser: `Количество дней превышает возможное` });
+			const day = isInfinity ? 9999 : Math.round(Number(numberDay));
 
-			const address = Secret.addressWalletWork;
-			const payAmount = +Secret.payToDay * day;
-
-			const formatFullPrise = await this.getUniqSum(payAmount);
-			userPayList.set(chatId, formatFullPrise);
-
-			const wordTRC20 = modules("Message").invoke.getWord(MessageInterface.EWord.TRC20, MessageInterface.ELang.RU);
-			const wordThrottle = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_THROTTLE, MessageInterface.ELang.RU);
-			const wordAddress = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_ADDRESS, MessageInterface.ELang.RU);
-			const wordSum = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_SUM, MessageInterface.ELang.RU);
-			const wordMinute = modules("Message").invoke.getWord(MessageInterface.EWord.TIME_LEFT, MessageInterface.ELang.RU);
-			const SubPeriod = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_PERIOD, MessageInterface.ELang.RU);
-			const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_COMPLETE, MessageInterface.ELang.RU);
-			const wordInstruction = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_INSTRUCTION, MessageInterface.ELang.RU, [
-				`<b>(${day})</b>`,
-				`<b>${formatFullPrise}</b>`,
-				`<b>${wordTRC20}</b>`,
-			]);
-
-			const wordContract = `${wordInstruction}\n\n${wordThrottle}\n\n${wordAddress}\n<code>${address}</code>\n\n${wordSum}\n<code>${formatFullPrise}</code>\n\n${SubPeriod}\n${day}\n\n${wordMinute}`;
-
-			const messageTimeLeft = messageId
-				? await modules("Telegram").invoke.editMessage(wordContract, chatId, messageId, { parseMode: "HTML" })
-				: await modules("Telegram").invoke.sendMessage(wordContract, chatId, { parseMode: "HTML" });
-
-			await CheckPay(modules, address, formatFullPrise, lastMinute);
-
-			const subscribeAfter = modules("Auth").invoke.addUserTime(chatId, day * 24);
-			const wordSubscribe = `${wordFinish} ${new Date(subscribeAfter).toLocaleDateString("ru-RU")}`;
-
-			await modules("Telegram").invoke.sendMessage(wordSubscribe, chatId);
-
-			userPayList.delete(chatId);
-
-			function lastMinute(num: number) {
-				try {
-					modules("Telegram")
-						.invoke.editMessage(`${wordContract} ${num}`, chatId, messageTimeLeft.message_id, { parseMode: "HTML" })
-						.catch((e) => console.log(`lastMinute ${e}`));
-				} catch (e) {
-					console.log(`lastMinute2 ${e}`);
-				}
+			if (!isInfinity) {
+				if (isNaN(day)) throwFn({ reasonUser: `Неверно указано количество дней` });
+				if (day < 1) throwFn({ reasonUser: `Количество дней не может быть меньше 1` });
+				if (day > 1000) throwFn({ reasonUser: `Количество дней превышает возможное` });
 			}
-		} catch (e) {
-			userPayList.delete(chatId);
-			throwFn(e === "ВНИМАНИЕ!\n\nОплата не была произведена в установленный срок" ? { reasonUser: e } : "Ошибка процесса оплаты", e);
-		}
-	}
-
-	async offerForever(modules: ProjectInterface.TDIService, chatId: number, messageId?: number) {
-		try {
-			userPayList.set(chatId, "");
-
-			const day = Math.round(Number(9999));
 
 			const address = Secret.addressWalletWork;
-			const payAmount = 9999;
+			const payAmount = isInfinity ? 9999 : +Secret.payToDay * day;
 
 			const formatFullPrise = await this.getUniqSum(payAmount);
 			userPayList.set(chatId, formatFullPrise);
@@ -145,18 +96,27 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			const SubPeriod = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_PERIOD, MessageInterface.ELang.RU);
 			const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_COMPLETE, MessageInterface.ELang.RU);
 			const wordInstruction = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_INSTRUCTION, MessageInterface.ELang.RU, [
-				`<b>(${forever})</b>`,
+				`<b>(${isInfinity ? forever : day})</b>`,
 				`<b>${formatFullPrise}</b>`,
 				`<b>${wordTRC20}</b>`,
 			]);
 
 			const wordContract = `${wordInstruction}\n\n${wordThrottle}\n\n${wordAddress}\n<code>${address}</code>\n\n${wordSum}\n<code>${formatFullPrise}</code>\n\n${SubPeriod}\n${forever}\n\n${wordMinute}`;
+			const command = OrchestratorTelegramInterface.EDirective.PAY;
+
+			const options: TelegramInterface.IMessageOptions = {
+				parseMode: "HTML",
+				buttons: [[{ text: "Отменить оплату", click: `${command} ${cancel}` }]],
+			};
 
 			const messageTimeLeft = messageId
-				? await modules("Telegram").invoke.editMessage(wordContract, chatId, messageId, { parseMode: "HTML" })
-				: await modules("Telegram").invoke.sendMessage(wordContract, chatId, { parseMode: "HTML" });
+				? await modules("Telegram").invoke.editMessage(wordContract, chatId, messageId, options)
+				: await modules("Telegram").invoke.sendMessage(wordContract, chatId, options);
 
-			await CheckPay(modules, address, formatFullPrise, lastMinute);
+			const controller = new AbortController();
+			abortFn.set(chatId, controller);
+
+			await CheckPay(modules, address, formatFullPrise, lastMinute, controller.signal);
 
 			const subscribeAfter = modules("Auth").invoke.addUserTime(chatId, day * 24);
 			const wordSubscribe = `${wordFinish} ${new Date(subscribeAfter).toLocaleDateString("ru-RU")}`;
@@ -168,7 +128,7 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			function lastMinute(num: number) {
 				try {
 					modules("Telegram")
-						.invoke.editMessage(`${wordContract} ${num}`, chatId, messageTimeLeft.message_id, { parseMode: "HTML" })
+						.invoke.editMessage(`${wordContract} ${num}`, chatId, messageTimeLeft.message_id, options)
 						.catch((e) => console.log(`lastMinute ${e}`));
 				} catch (e) {
 					console.log(`lastMinute2 ${e}`);
@@ -176,8 +136,17 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			}
 		} catch (e) {
 			userPayList.delete(chatId);
-			throwFn(e === "ВНИМАНИЕ!\n\nОплата не была произведена в установленный срок" ? { reasonUser: e } : "Ошибка процесса оплаты", e);
+			throwFn(
+				e === "ВНИМАНИЕ!\n\nОплата не была произведена в установленный срок" || e === "Оплата была отменена пользователем"
+					? { reasonUser: e }
+					: "Ошибка процесса оплаты",
+				e,
+			);
 		}
+	}
+
+	async cancelPay(chatId: number) {
+		abortFn.get(chatId)?.abort();
 	}
 }
 

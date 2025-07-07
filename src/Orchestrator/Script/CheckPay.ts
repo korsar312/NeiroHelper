@@ -3,7 +3,13 @@ import { clearInterval } from "node:timers";
 import { throwFn } from "../../Utils";
 import { Secret } from "../../Config/Secret";
 
-async function CheckPay(modules: ProjectInterface.TDIService, address: string, sum: string, callback?: (timer: number) => void) {
+async function CheckPay(
+	modules: ProjectInterface.TDIService,
+	address: string,
+	sum: string,
+	callback?: (timer: number) => void,
+	abortFn?: AbortSignal,
+) {
 	let count = 0;
 	let isCircle = true;
 	const maxCount = Secret.awaitPay;
@@ -13,6 +19,12 @@ async function CheckPay(modules: ProjectInterface.TDIService, address: string, s
 
 		return new Promise(async (resolve, reject) => {
 			callback?.(maxCount);
+
+			abortFn?.addEventListener("abort", () => {
+				clearInterval(tick);
+				isCircle = false;
+				reject("Оплата была отменена пользователем");
+			});
 
 			const tick = setInterval(() => {
 				++count;
