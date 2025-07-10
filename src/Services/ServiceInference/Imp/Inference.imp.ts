@@ -29,7 +29,7 @@ class InferenceImp implements InferenceInterface.IAdapter {
 
 		return this.client?.responses.create({
 			/** Модель для ответа */
-			model: "gpt-4.1-mini",
+			model: "gpt-4.1-mini-2025-04-14",
 
 			/** Список сообщений, передаваемых в модель в данном запросе */
 			input: [systemPrompt, contextPrompt, ...historyPrompt, userPrompt],
@@ -44,7 +44,7 @@ class InferenceImp implements InferenceInterface.IAdapter {
 			tools: [],
 
 			/** Параметр, отвечающий за «творческую свободу» генерации. 0 - нет свободы */
-			temperature: 0.7,
+			temperature: 0.3,
 
 			/** Максимальное число токенов, которое модель может выдать в ответе */
 			max_output_tokens: 2500,

@@ -36,6 +36,6 @@ class Say implements OrchestratorTelegramInterface.IClass {
 		await modules("History").invoke.setHistory(chatId, new Date().getTime(), text, reply);
 
 		const chunks = reply.match(/[\s\S]{1,4000}(?=\s|$)/g) || [];
-		for (const chunk of chunks) await modules("Telegram").invoke.sendMessage(chunk, chatId);
+		for (const chunk of chunks) await modules("Telegram").invoke.sendMessage(chunk, chatId, { parseMode: "HTML" });
 	}
 }
