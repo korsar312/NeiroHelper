@@ -1,15 +1,22 @@
 import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
 import { DirectiveBase } from "../DirectiveBase";
-import modules from "../../../DI";
+import { ProjectInterface } from "../../../DI/Project.interface";
 
-const registry = new Map<string, DirectiveBase>();
+export class RegisterDirective {
+	private readonly modules: ProjectInterface.TDIModules;
+	private registry = new Map<string, DirectiveBase>();
 
-export function RegisterDirective(command: OrchestratorTelegramInterface.EDirective) {
-	return function (target: new (params: OrchestratorTelegramInterface.TDirective) => DirectiveBase) {
-		registry.set(command, new target(modules));
-	};
-}
+	constructor(modules: ProjectInterface.TDIModules) {
+		this.modules = modules;
+	}
 
-export function getDirective(command: string): DirectiveBase | null {
-	return registry.get(command) || null;
+	public register(command: OrchestratorTelegramInterface.EDirective) {
+		return (target: new (params: OrchestratorTelegramInterface.TDirective) => DirectiveBase) => {
+			this.registry.set(command, new target(this.modules));
+		};
+	}
+
+	public getDirective(command: string): DirectiveBase | null {
+		return this.registry.get(command) || null;
+	}
 }

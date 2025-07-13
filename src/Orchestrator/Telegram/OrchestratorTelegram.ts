@@ -1,6 +1,4 @@
-import "./OrchestratorTelegram.init";
 import { parseCommand } from "./Utils/ScriptParse";
-import { getDirective } from "./Utils/ScriptRegistry";
 import OrchestratorBase from "../OrchestratorBase";
 import { OrchestratorTelegramInterface } from "./OrchestratorTelegram.interface";
 import { TelegramInterface } from "../../Services/ServiceTelegram/Telegram.interface";
@@ -8,10 +6,19 @@ import { MessageInterface } from "../../Services/ServiceMessage/Message.interfac
 import { AuthInterface } from "../../Services/ServiceAuth/Auth.interface";
 import { scriptGetChatId } from "./Utils/ScriptGetChatId";
 import { IThrow, throwFn } from "../../Utils";
+import { ProjectInterface } from "../../DI/Project.interface";
+import { RegisterDirective } from "./Utils/ScriptRegistry";
 
 class OrchestratorTelegram extends OrchestratorBase {
-	private offset = 0;
+	private diDirective: RegisterDirective;
 	private isPolling = true;
+	private offset = 0;
+
+	constructor(params: ProjectInterface.TDIModules, diDirective: RegisterDirective) {
+		import("./OrchestratorTelegram.init");
+		super(params);
+		this.diDirective = diDirective;
+	}
 
 	async invoke() {
 		await this.init();
@@ -80,7 +87,7 @@ class OrchestratorTelegram extends OrchestratorBase {
 			const isAuth = this.modules.services("Auth").invoke.isAuthUser(id, command);
 			if (!isAuth) command = OrchestratorTelegramInterface.EDirective.NO_AUTH;
 
-			const directive = getDirective(command);
+			const directive = this.diDirective.getDirective(command);
 			if (directive === null) throwFn(`Невалидная команда ${command}`);
 
 			await directive.invoke(update);
