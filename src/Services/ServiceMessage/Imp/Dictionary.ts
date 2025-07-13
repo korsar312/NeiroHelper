@@ -1,6 +1,9 @@
 import { MessageInterface } from "../Message.interface";
 
 const Dictionary: MessageInterface.TDictionary = {
+	MESSAGE_SEND: {
+		RU: "Сообщение отправлено",
+	},
 	LEARN_DISC: {
 		RU: "Добавить информацию в базу знаний. Через пробел указать текст или отправить файл",
 	},

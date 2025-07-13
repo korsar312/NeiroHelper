@@ -33,6 +33,8 @@ class AuthImp implements AuthInterface.IAdapter {
 	public isAuthUser(userId: number, command: OrchestratorTelegramInterface.EDirective) {
 		const user = this.Infrastructure("DB").invoke.read.grade(userId);
 
+		if (!user) this.setUserGrade(userId, AuthInterface.EGrade.GOY);
+
 		const userTimeMs = +(user?.expiresAt || "0");
 		const dateNowMs = new Date().getTime();
 		const subscriptWorks = dateNowMs < userTimeMs;

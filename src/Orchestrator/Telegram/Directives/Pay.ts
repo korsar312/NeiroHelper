@@ -134,7 +134,7 @@ ${wordMinute}
 			const subscribeAfter = this.modules.services("Auth").invoke.addUserTime(chatId, day * 24);
 			const wordSubscribe = `${wordFinish} ${new Date(subscribeAfter).toLocaleDateString("ru-RU")}`;
 
-			await this.modules.services("Telegram").invoke.sendMessage(wordSubscribe, chatId);
+			await this.modules.services("Telegram").invoke.editMessage(wordSubscribe, chatId, messageTimeLeft.message_id);
 
 			userPayList.delete(chatId);
 

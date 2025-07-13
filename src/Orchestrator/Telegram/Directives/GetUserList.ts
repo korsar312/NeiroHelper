@@ -20,9 +20,8 @@ export class GetUserList extends DirectiveBase {
 
 		const forHuman = users.reduce((prev, cur) => {
 			const id = `${wordId} - ${cur.userId}\n`;
-
 			const subUntil = cur.timeOver ? `${wordSubUntil} - ${new Date(+cur.timeOver).toLocaleString("ru-RU")}\n` : "";
-			const subIsActive = `${wordSubIsActive} - ${cur.isOverSub ? wordYes : wordNo}\n`;
+			const subIsActive = `${wordSubIsActive} - ${cur.isOverSub ? wordNo : wordYes}\n`;
 
 			return prev + (id + subUntil + subIsActive + `\n`);
 		}, "");
