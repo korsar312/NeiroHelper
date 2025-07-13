@@ -34,6 +34,7 @@ class FilesImp implements FilesInterface.IAdapter {
 	private async createPath(params: FilesInterface.IParams) {
 		const dirPath = join(params.path, params.name + params.format);
 		await this.ensureDir(params.path);
+		await this.ensureDir(dirPath);
 
 		return dirPath;
 	}

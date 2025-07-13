@@ -13,6 +13,7 @@ export namespace FilesInterface {
 		AUTH = "auth",
 		PROMPT = "Instruction",
 		HISTORY = "historyUser",
+		PAYMENT = "pay",
 	}
 
 	export enum EFileName {
@@ -31,6 +32,18 @@ export namespace FilesInterface {
 	}
 
 	export const FilePath = {
+		LOG_SAY: () => ({
+			path: `${EFolder.RECURSES}/${EFolder.HISTORY}`,
+			name: EFileName.STAT,
+			format: EFormat.JSONL,
+		}),
+
+		LOG_PAY: () => ({
+			path: `${EFolder.RECURSES}/${EFolder.PAYMENT}`,
+			name: EFileName.STAT,
+			format: EFormat.JSONL,
+		}),
+
 		LEARN: () => ({
 			path: `${EFolder.RECURSES}/${EFolder.LEARN}`,
 			name: EFileName.LEARN,

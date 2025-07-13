@@ -8,6 +8,7 @@ import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.in
 import { Secret } from "../../../Config/Secret";
 import CheckPay from "../../Script/CheckPay";
 import { Directive } from "../../../index";
+import { FilesInterface } from "../../../Infrastructure/InfrastructureFiles/Files.interface";
 
 const userPayList: Map<number, string> = new Map();
 const abortFn = new Map<number, AbortController>();
@@ -134,9 +135,11 @@ ${wordMinute}
 			const subscribeAfter = this.modules.services("Auth").invoke.addUserTime(chatId, day * 24);
 			const wordSubscribe = `${wordFinish} ${new Date(subscribeAfter).toLocaleDateString("ru-RU")}`;
 
-			await this.modules.services("Telegram").invoke.editMessage(wordSubscribe, chatId, messageTimeLeft.message_id);
-
 			userPayList.delete(chatId);
+			const log = { userId: chatId, date: new Date().toLocaleString("ru-RU"), price: formatFullPrise };
+
+			await this.modules.services("Telegram").invoke.editMessage(wordSubscribe, chatId, messageTimeLeft.message_id);
+			await this.modules.infrastructure("Files").invoke.addToFile(FilesInterface.FilePath.LOG_PAY(), JSON.stringify(log));
 
 			function lastMinute(num: number) {
 				try {

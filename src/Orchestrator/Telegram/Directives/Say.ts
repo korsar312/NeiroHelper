@@ -7,6 +7,7 @@ import { Secret } from "../../../Config/Secret";
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
 import { Directive } from "../../../index";
 import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
+import { FilesInterface } from "../../../Infrastructure/InfrastructureFiles/Files.interface";
 
 @Directive.register(OrchestratorTelegramInterface.EDirective.SAY)
 export class Say extends DirectiveBase {
@@ -32,10 +33,12 @@ export class Say extends DirectiveBase {
 
 		if (generate?.output_text === undefined) throwFn(`Отсутствие поля ответа \n== ${generate}`);
 		const reply = generate.output_text;
+		const log = { userId: chatId, date: new Date().toLocaleString("ru-RU"), question: text, answer: reply };
 
 		console.log(text + "\n", reply);
 
 		await this.modules.services("History").invoke.setHistory(chatId, new Date().getTime(), text, reply);
 		await this.modules.services("Telegram").invoke.sendManyMessage(reply, chatId, { parseMode: "HTML" });
+		await this.modules.infrastructure("Files").invoke.addToFile(FilesInterface.FilePath.LOG_SAY(), JSON.stringify(log));
 	}
 }
