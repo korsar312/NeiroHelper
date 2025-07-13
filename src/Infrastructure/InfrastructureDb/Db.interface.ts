@@ -14,6 +14,9 @@ export namespace DbInterface {
 			/** возвращает { role, expiresAt } | undefined. */
 			grade(id: number): TUser | undefined;
 
+			/** возвращает Array<{ role, expiresAt }> | undefined  */
+			allUsers(): TUser[] | undefined;
+
 			/** возвращает последние qty пар. */
 			tokens(id: number): number | undefined;
 
@@ -40,18 +43,8 @@ export namespace DbInterface {
 			/** удаляют все связанные записи по id. */
 			history(id: number): void;
 		};
-		readAll: {
-			/** возвращает массив объектов вида { id: [ { role, expiresAt? }, … ] } */
-			grade(): Array<{ id: TUser[] }>;
-
-			/** возвращает массив всех tokens-записей { id, amount } */
-			tokens(): Array<{ id: number; amount: number }>;
-
-			/** возвращает массив объектов вида { id: [ { idMessage, question, answer }, … ] } */
-			history(): Array<{ id: THistoryItem[] }>;
-		};
 	}
 
 	export type THistoryItem = { question: string; answer: string; id: number };
-	export type TUser = { role: string; expiresAt?: string };
+	export type TUser = { role: string; expiresAt?: string; id: number };
 }

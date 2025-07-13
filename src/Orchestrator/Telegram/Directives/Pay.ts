@@ -7,6 +7,7 @@ import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
 import { Secret } from "../../../Config/Secret";
 import CheckPay from "../../Script/CheckPay";
+import { Directive } from "../../../index";
 
 const userPayList: Map<number, string> = new Map();
 const abortFn = new Map<number, AbortController>();
@@ -14,6 +15,7 @@ const abortFn = new Map<number, AbortController>();
 const forever = "Пожизненно";
 const cancel = "cancel";
 
+@Directive.register(OrchestratorTelegramInterface.EDirective.PAY)
 export class Pay extends DirectiveBase {
 	public async invoke(data: TelegramInterface.IUpdate) {
 		try {

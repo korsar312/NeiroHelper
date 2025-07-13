@@ -48,7 +48,13 @@ class DbImp implements DbInterface.IAdapter {
 	read = {
 		grade: (id: number): DbInterface.TUser | undefined => {
 			const row = this.db.prepare(`SELECT role, expiresAt FROM grade WHERE id = ?;`).get(id) as DbInterface.TUser | undefined;
-			return row ? { role: row.role, expiresAt: row.expiresAt ?? undefined } : undefined;
+			return row ? { role: row.role, id, expiresAt: row.expiresAt ?? undefined } : undefined;
+		},
+
+		allUsers: (): DbInterface.TUser[] => {
+			const rows = this.db.prepare(`SELECT id, role, expiresAt FROM grade;`).all() as DbInterface.TUser[];
+
+			return rows.map(({ id, role, expiresAt }) => ({ id: id, role: role, expiresAt: expiresAt ?? undefined }));
 		},
 
 		tokens: (id: number): number | undefined => {
@@ -115,47 +121,6 @@ class DbImp implements DbInterface.IAdapter {
 
 		history: (id: number) => {
 			this.db.prepare(`DELETE FROM history WHERE id = ?;`).run(id);
-		},
-	};
-
-	readAll = {
-		grade: (): Array<{ id: DbInterface.TUser[] }> => {
-			const rows = this.db.prepare(`SELECT id, role, expiresAt FROM grade;`).all() as Array<{
-				id: number;
-				role: string;
-				expiresAt: string | null;
-			}>;
-
-			const map = new Map<number, DbInterface.TUser[]>();
-
-			for (const { id, role, expiresAt } of rows) {
-				if (!map.has(id)) map.set(id, []);
-				map.get(id)!.push({ role, expiresAt: expiresAt ?? undefined });
-			}
-
-			return Array.from(map.values()).map((arr) => ({ id: arr }));
-		},
-
-		tokens: (): Array<{ id: number; amount: number }> => {
-			return this.db.prepare(`SELECT id, amount FROM tokens;`).all() as Array<{ id: number; amount: number }>;
-		},
-
-		history: (): Array<{ id: DbInterface.THistoryItem[] }> => {
-			const rows = this.db.prepare(`SELECT id, idMessage, question, answer FROM history;`).all() as Array<{
-				id: number;
-				idMessage: number;
-				question: string;
-				answer: string;
-			}>;
-
-			const map = new Map<number, DbInterface.THistoryItem[]>();
-
-			for (const { id, idMessage, question, answer } of rows) {
-				if (!map.has(id)) map.set(id, []);
-				map.get(id)!.push({ id: idMessage, question, answer });
-			}
-
-			return Array.from(map.values()).map((arr) => ({ id: arr }));
 		},
 	};
 }

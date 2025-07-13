@@ -3,7 +3,10 @@ import { MessageInterface } from "../../../Services/ServiceMessage/Message.inter
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
 import { Secret } from "../../../Config/Secret";
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
+import { Directive } from "../../../index";
+import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
 
+@Directive.register(OrchestratorTelegramInterface.EDirective.CASH_OUT)
 export class CashOut extends DirectiveBase {
 	public async invoke(data: TelegramInterface.IUpdate) {
 		const userId = scriptGetChatId(data);

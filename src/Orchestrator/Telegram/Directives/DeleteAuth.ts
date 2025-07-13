@@ -5,7 +5,9 @@ import { parseCommand } from "../Utils/ScriptParse";
 import { throwFn } from "../../../Utils";
 import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
+import { Directive } from "../../../index";
 
+@Directive.register(OrchestratorTelegramInterface.EDirective.DEL_AUTH)
 export class DeleteAuth extends DirectiveBase {
 	public async invoke(data: TelegramInterface.IUpdate) {
 		try {

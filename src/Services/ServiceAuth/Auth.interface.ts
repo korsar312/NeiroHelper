@@ -8,7 +8,7 @@ export namespace AuthInterface {
 
 		getUserInfo(userId: number): TUserInfo;
 
-		getAllUser(): Array<{ id: { role: string; expiresAt?: string }[] }>;
+		getAllUser(): Array<TUserInfo>;
 
 		removeUser(userId: number): void;
 	}

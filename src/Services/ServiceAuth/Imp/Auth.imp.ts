@@ -7,12 +7,12 @@ const allAccess = [
 	OrchestratorTelegramInterface.EDirective.START,
 	OrchestratorTelegramInterface.EDirective.NO_AUTH,
 	OrchestratorTelegramInterface.EDirective.PAY,
-	OrchestratorTelegramInterface.EDirective.TRANSFER,
 ];
 const userAccess = [...allAccess, OrchestratorTelegramInterface.EDirective.CLEAR, OrchestratorTelegramInterface.EDirective.SAY];
 
 const adminAccess = [
 	...userAccess,
+	OrchestratorTelegramInterface.EDirective.TRANSFER,
 	OrchestratorTelegramInterface.EDirective.GET_BALANCE,
 	OrchestratorTelegramInterface.EDirective.LEARN,
 	OrchestratorTelegramInterface.EDirective.GET_ALL_USER,
@@ -20,6 +20,7 @@ const adminAccess = [
 	OrchestratorTelegramInterface.EDirective.ADD_AUTH,
 	OrchestratorTelegramInterface.EDirective.SEND_MASSAGE,
 	OrchestratorTelegramInterface.EDirective.CASH_OUT,
+	OrchestratorTelegramInterface.EDirective.SEND_ALL,
 ];
 
 class AuthImp implements AuthInterface.IAdapter {
@@ -73,8 +74,10 @@ class AuthImp implements AuthInterface.IAdapter {
 		return newDate;
 	}
 
-	public getAllUser() {
-		return this.Infrastructure("DB").invoke.readAll.grade();
+	public getAllUser(): AuthInterface.TUserInfo[] {
+		const user = this.Infrastructure("DB").invoke.read.allUsers();
+
+		return user?.map((el) => this.getUserInfo(el.id)) || [];
 	}
 
 	public getUserInfo(userId: number): AuthInterface.TUserInfo {

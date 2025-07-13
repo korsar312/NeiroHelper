@@ -4,13 +4,15 @@ export namespace TelegramInterface {
 	export interface IAdapter {
 		sendMessage(text: string, chat_id: number, options?: IMessageOptions): Promise<ISend>;
 
+		sendManyMessage(text: string, chat_id: number, options?: IMessageOptions): Promise<void>;
+
 		editMessage(text: string, chat_id: number, message_id: number, options?: IMessageOptions): Promise<ISend>;
 
 		getMessage(lastId?: number): Promise<TelegramInterface.IUpdate[]>;
 
 		getFile(file_id: string): Promise<Readable>;
 
-		setCommand(commands: TelegramInterface.ICommand[]): Promise<unknown>;
+		setCommand(commands: TelegramInterface.ICommand[], forUser?: number): Promise<unknown>;
 	}
 
 	export interface IUpdate {

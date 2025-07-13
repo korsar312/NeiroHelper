@@ -2,7 +2,9 @@ import { DirectiveBase } from "../DirectiveBase";
 import { parseCommand } from "../Utils/ScriptParse";
 import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
+import { Directive } from "../../../index";
 
+@Directive.register(OrchestratorTelegramInterface.EDirective.SEND_MASSAGE)
 export class SendMgs extends DirectiveBase {
 	public async invoke(data: TelegramInterface.IUpdate) {
 		const text = parseCommand(data.message?.text || "").text;

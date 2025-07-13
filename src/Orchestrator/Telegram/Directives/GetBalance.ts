@@ -6,7 +6,10 @@ import { throwFn } from "../../../Utils";
 import { Secret } from "../../../Config/Secret";
 import { AuthInterface } from "../../../Services/ServiceAuth/Auth.interface";
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
+import { Directive } from "../../../index";
+import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
 
+@Directive.register(OrchestratorTelegramInterface.EDirective.GET_BALANCE)
 export class GetBalance extends DirectiveBase {
 	public async invoke(data: TelegramInterface.IUpdate) {
 		const userId = scriptGetChatId(data);

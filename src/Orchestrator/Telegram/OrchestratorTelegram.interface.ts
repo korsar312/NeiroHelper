@@ -4,19 +4,20 @@ export namespace OrchestratorTelegramInterface {
 	export type TDirective = {} & ProjectInterface.TDIModules;
 
 	export enum EDirective {
-		SAY = "/say",
-		LEARN = "/learn",
-		NO_AUTH = "/noAuth",
-		CLEAR = "/clear",
 		PAY = "/pay",
+		SAY = "/say",
 		START = "/start",
-		ADD_AUTH = "/addUser",
-		CASH_OUT = "/cashOut",
+		LEARN = "/learn",
+		CLEAR = "/clear",
+		NO_AUTH = "/noauth",
+		CASH_OUT = "/cashout",
+		SEND_ALL = "/sendall",
+		ADD_AUTH = "/adduser",
+		DEL_AUTH = "/deluser",
 		TRANSFER = "/transfer",
 		GET_BALANCE = "/getusdt",
-		DEL_AUTH = "/delUser",
-		GET_ALL_USER = "/getUsers",
-		SEND_MASSAGE = "/sendMgs",
+		GET_ALL_USER = "/getusers",
+		SEND_MASSAGE = "/sendmessage",
 	}
 
 	export type TDirectiveParse = {

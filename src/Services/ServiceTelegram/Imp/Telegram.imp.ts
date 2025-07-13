@@ -24,6 +24,11 @@ class TelegramImp implements TelegramInterface.IAdapter {
 		return this.request<TelegramInterface.ISend>({ method: POST, link: ELink.SEND_MESSAGE, data });
 	}
 
+	public async sendManyMessage(text: string, chat_id: number, options?: TelegramInterface.IMessageOptions) {
+		const chunks = text.match(/[\s\S]{1,4000}(?=\s|$)/g) || [];
+		for (const chunk of chunks) await this.sendMessage(chunk, chat_id, options);
+	}
+
 	public editMessage(text: string, chat_id: number, message_id: number, options?: TelegramInterface.IMessageOptions) {
 		const btn = options?.buttons?.map((row) => row.map((cell) => ({ text: cell.text, callback_data: cell.click, url: cell.url })));
 		const data = { chat_id, text, message_id, parse_mode: options?.parseMode, reply_markup: { inline_keyboard: btn } };
@@ -48,8 +53,8 @@ class TelegramImp implements TelegramInterface.IAdapter {
 		return this.request<Readable>({ method: GET, link: ELink.GET_FILE, addLink: file.file_path, type: EType.FILE });
 	}
 
-	public setCommand(commands: TelegramInterface.ICommand[]) {
-		return this.request({ method: POST, link: ELink.SET_DIRECTIVES, data: { commands } });
+	public setCommand(commands: TelegramInterface.ICommand[], forUser?: number) {
+		return this.request({ method: POST, link: ELink.SET_DIRECTIVES, data: { commands, scope: forUser && { type: "chat", chat_id: forUser } } });
 	}
 }
 

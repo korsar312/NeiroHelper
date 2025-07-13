@@ -5,7 +5,10 @@ import { parseCommand } from "../Utils/ScriptParse";
 import { throwFn } from "../../../Utils";
 import { Secret } from "../../../Config/Secret";
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
+import { Directive } from "../../../index";
+import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
 
+@Directive.register(OrchestratorTelegramInterface.EDirective.SAY)
 export class Say extends DirectiveBase {
 	public async invoke(data: TelegramInterface.IUpdate) {
 		try {
@@ -33,8 +36,6 @@ export class Say extends DirectiveBase {
 		console.log(text + "\n", reply);
 
 		await this.modules.services("History").invoke.setHistory(chatId, new Date().getTime(), text, reply);
-
-		const chunks = reply.match(/[\s\S]{1,4000}(?=\s|$)/g) || [];
-		for (const chunk of chunks) await this.modules.services("Telegram").invoke.sendMessage(chunk, chatId, { parseMode: "HTML" });
+		await this.modules.services("Telegram").invoke.sendManyMessage(reply, chatId, { parseMode: "HTML" });
 	}
 }

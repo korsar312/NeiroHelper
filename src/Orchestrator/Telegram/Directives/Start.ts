@@ -4,7 +4,9 @@ import { scriptGetChatId } from "../Utils/ScriptGetChatId";
 import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
 import { Secret } from "../../../Config/Secret";
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
+import { Directive } from "../../../index";
 
+@Directive.register(OrchestratorTelegramInterface.EDirective.START)
 export class Start extends DirectiveBase {
 	public async invoke(data: TelegramInterface.IUpdate) {
 		const userId = scriptGetChatId(data);

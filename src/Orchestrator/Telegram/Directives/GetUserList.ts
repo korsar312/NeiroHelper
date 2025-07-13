@@ -1,20 +1,32 @@
 import { DirectiveBase } from "../DirectiveBase";
-import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
+import { Directive } from "../../../index";
+import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
+import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
 
+@Directive.register(OrchestratorTelegramInterface.EDirective.GET_ALL_USER)
 export class GetUserList extends DirectiveBase {
 	public async invoke(data: TelegramInterface.IUpdate) {
-		const userId = scriptGetChatId(data);
-		const wordFinish = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.USER_ADDED, MessageInterface.ELang.RU);
+		const id = scriptGetChatId(data);
 
-		const userList = this.modules.services("Auth").invoke.getAllUser();
+		const users = this.modules.services("Auth").invoke.getAllUser();
 
-		userList.reduce((prev, cur) => {
-			prev += cur.id;
-			return prev;
+		const wordId = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.ID, MessageInterface.ELang.RU);
+		const wordNo = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.NO, MessageInterface.ELang.RU);
+		const wordYes = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.YES, MessageInterface.ELang.RU);
+		const wordSubUntil = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.SUB_UNTIL, MessageInterface.ELang.RU);
+		const wordSubIsActive = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.SUB_ACTIVE, MessageInterface.ELang.RU);
+
+		const forHuman = users.reduce((prev, cur) => {
+			const id = `${wordId} - ${cur.userId}\n`;
+
+			const subUntil = cur.timeOver ? `${wordSubUntil} - ${new Date(+cur.timeOver).toLocaleString("ru-RU")}\n` : "";
+			const subIsActive = `${wordSubIsActive} - ${cur.isOverSub ? wordYes : wordNo}\n`;
+
+			return prev + (id + subUntil + subIsActive + `\n`);
 		}, "");
 
-		//modules("Telegram").invoke.sendMessage(wordFinish, userId);
+		await this.modules.services("Telegram").invoke.sendManyMessage(forHuman, id);
 	}
 }

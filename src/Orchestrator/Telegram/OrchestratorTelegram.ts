@@ -9,6 +9,8 @@ import { IThrow, throwFn } from "../../Utils";
 import { ProjectInterface } from "../../DI/Project.interface";
 import { RegisterDirective } from "./Utils/ScriptRegistry";
 
+type TRoleCommand = "admin" | "sup";
+
 class OrchestratorTelegram extends OrchestratorBase {
 	private diDirective: RegisterDirective;
 	private isPolling = true;
@@ -27,20 +29,57 @@ class OrchestratorTelegram extends OrchestratorBase {
 
 	public async init() {
 		try {
-			const { START, CLEAR, PAY } = OrchestratorTelegramInterface.EDirective;
-
 			this.modules.services("Auth").invoke.setUserGrade(410821090, AuthInterface.EGrade.SUPER);
 			this.modules.services("Auth").invoke.setUserGrade(995717149, AuthInterface.EGrade.ADMIN, "2751189346824");
 
 			const payDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.PAY_DISC, MessageInterface.ELang.RU);
 			const startDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.START_DISC, MessageInterface.ELang.RU);
 			const clearDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.CLEAR_DISC, MessageInterface.ELang.RU);
+			const learnDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.LEARN_DISC, MessageInterface.ELang.RU);
+			const CashOutDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.CASH_OUT_DISC, MessageInterface.ELang.RU);
+			const sendAllDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.SEND_ALL_DISC, MessageInterface.ELang.RU);
+			const AddUserDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.ADD_AUTH_DISC, MessageInterface.ELang.RU);
+			const DelUserDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.DEL_AUTH_DISC, MessageInterface.ELang.RU);
+			const transferDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.TRANSFER_DISC, MessageInterface.ELang.RU);
+			const getBalDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.GET_BALANCE_DISC, MessageInterface.ELang.RU);
+			const sendMesDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.SEND_MASSAGE_DISC, MessageInterface.ELang.RU);
+			const getAllUsDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.GET_ALL_USER_DISC, MessageInterface.ELang.RU);
 
-			await this.modules.services("Telegram").invoke.setCommand([
-				{ command: PAY, description: payDisc },
-				{ command: START, description: startDisc },
-				{ command: CLEAR, description: clearDisc },
-			]);
+			const allUser = this.modules.services("Auth").invoke.getAllUser();
+			const userGrade = allUser.reduce(
+				(prev: Record<TRoleCommand, number[]>, { userId, grade }) => {
+					const id = +userId;
+
+					if (grade === AuthInterface.EGrade.ADMIN) prev.admin.push(id);
+					if (grade === AuthInterface.EGrade.SUPER) prev.sup.push(id);
+
+					return prev;
+				},
+				{ admin: [], sup: [] },
+			);
+
+			const goiPull: TelegramInterface.ICommand[] = [
+				{ command: OrchestratorTelegramInterface.EDirective.PAY, description: payDisc },
+				{ command: OrchestratorTelegramInterface.EDirective.START, description: startDisc },
+				{ command: OrchestratorTelegramInterface.EDirective.CLEAR, description: clearDisc },
+			];
+
+			const adminPull: TelegramInterface.ICommand[] = [
+				...goiPull,
+				{ command: OrchestratorTelegramInterface.EDirective.LEARN, description: learnDisc },
+				{ command: OrchestratorTelegramInterface.EDirective.CASH_OUT, description: CashOutDisc },
+				{ command: OrchestratorTelegramInterface.EDirective.SEND_ALL, description: sendAllDisc },
+				{ command: OrchestratorTelegramInterface.EDirective.ADD_AUTH, description: AddUserDisc },
+				{ command: OrchestratorTelegramInterface.EDirective.DEL_AUTH, description: DelUserDisc },
+				{ command: OrchestratorTelegramInterface.EDirective.TRANSFER, description: transferDisc },
+				{ command: OrchestratorTelegramInterface.EDirective.GET_BALANCE, description: getBalDisc },
+				{ command: OrchestratorTelegramInterface.EDirective.GET_ALL_USER, description: getAllUsDisc },
+				{ command: OrchestratorTelegramInterface.EDirective.SEND_MASSAGE, description: sendMesDisc },
+			];
+
+			for (const el of [...userGrade.admin, ...userGrade.sup]) await this.modules.services("Telegram").invoke.setCommand(adminPull, el);
+
+			await this.modules.services("Telegram").invoke.setCommand(goiPull);
 		} catch (e) {
 			console.log(`Ошибка инициализации \n== ${e}`);
 		}
