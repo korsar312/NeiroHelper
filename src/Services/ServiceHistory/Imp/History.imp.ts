@@ -2,9 +2,9 @@ import { HistoryInterface } from "../History.interface";
 import { ProjectInterface } from "../../../DI/Project.interface";
 
 class HistoryImp implements HistoryInterface.IAdapter {
-	protected Infrastructure: ProjectInterface.TDIInfrastructure;
+	protected Infrastructure: ProjectInterface.TInfrastructure;
 
-	constructor(Infrastructure: ProjectInterface.TDIInfrastructure) {
+	constructor(Infrastructure: ProjectInterface.TInfrastructure) {
 		this.Infrastructure = Infrastructure;
 	}
 

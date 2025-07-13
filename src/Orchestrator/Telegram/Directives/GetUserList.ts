@@ -1,17 +1,14 @@
-import { RegisterDirective } from "../Utils/ScriptRegistry";
-import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
-import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
-import { ProjectInterface } from "../../../DI/Project.interface";
+import { DirectiveBase } from "../DirectiveBase";
 import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
+import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
 
-@RegisterDirective(OrchestratorTelegramInterface.EDirective.GET_ALL_USER)
-class GetUserList implements OrchestratorTelegramInterface.IClass {
-	public async invoke(modules: ProjectInterface.TDIService, data: TelegramInterface.IUpdate) {
+export class GetUserList extends DirectiveBase {
+	public async invoke(data: TelegramInterface.IUpdate) {
 		const userId = scriptGetChatId(data);
-		const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.USER_ADDED, MessageInterface.ELang.RU);
+		const wordFinish = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.USER_ADDED, MessageInterface.ELang.RU);
 
-		const userList = modules("Auth").invoke.getAllUser();
+		const userList = this.modules.services("Auth").invoke.getAllUser();
 
 		userList.reduce((prev, cur) => {
 			prev += cur.id;

@@ -1,30 +1,31 @@
-import { RegisterDirective } from "../Utils/ScriptRegistry";
-import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
-import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
-import { ProjectInterface } from "../../../DI/Project.interface";
-import { parseCommand } from "../Utils/ScriptParse";
+import { DirectiveBase } from "../DirectiveBase";
 import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
+import { parseCommand } from "../Utils/ScriptParse";
 import { throwFn } from "../../../Utils";
+import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
+import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
 
-@RegisterDirective(OrchestratorTelegramInterface.EDirective.DEL_AUTH)
-class DeleteAuth implements OrchestratorTelegramInterface.IClass {
-	public async invoke(modules: ProjectInterface.TDIService, data: TelegramInterface.IUpdate) {
+export class DeleteAuth extends DirectiveBase {
+	public async invoke(data: TelegramInterface.IUpdate) {
 		try {
 			const userId = scriptGetChatId(data);
-			const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.USER_DELETED, MessageInterface.ELang.RU);
-			const wordUserNotFound = modules("Message").invoke.getWord(MessageInterface.EWord.USER_NOT_FOUND, MessageInterface.ELang.RU);
+			const wordFinish = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.USER_DELETED, MessageInterface.ELang.RU);
+			const wordUserNotFound = this.modules
+				.services("Message")
+				.invoke.getWord(MessageInterface.EWord.USER_NOT_FOUND, MessageInterface.ELang.RU);
 
 			const text = parseCommand(data.message?.text || "").text;
 			const deleteId = Number(text);
 
 			if (isNaN(deleteId)) throwFn({ reasonUser: `Ошибка парсинга id` });
 
-			const isUserExist = modules("Auth").invoke.isAuthUser(deleteId, OrchestratorTelegramInterface.EDirective.SAY);
+			const isUserExist = this.modules.services("Auth").invoke.isAuthUser(deleteId, OrchestratorTelegramInterface.EDirective.SAY);
 			if (!isUserExist) throwFn({ reasonUser: wordUserNotFound });
 
-			modules("Auth").invoke.removeUser(deleteId);
-			modules("Telegram")
+			this.modules.services("Auth").invoke.removeUser(deleteId);
+			this.modules
+				.services("Telegram")
 				.invoke.sendMessage(wordFinish, userId)
 				.catch((e) => {
 					console.log(`DeleteAuth ${e}`);

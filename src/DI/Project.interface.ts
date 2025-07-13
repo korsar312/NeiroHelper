@@ -28,6 +28,11 @@ export namespace ProjectInterface {
 
 	type TDI<M> = <T extends keyof M>(key: T) => M[T];
 
-	export type TDIService = TDI<TModuleService>;
-	export type TDIInfrastructure = TDI<TModuleInf>;
+	export type TServices = TDI<TModuleService>;
+	export type TInfrastructure = TDI<TModuleInf>;
+
+	export type TDIModules = {
+		services: TServices;
+		infrastructure: TInfrastructure;
+	};
 }

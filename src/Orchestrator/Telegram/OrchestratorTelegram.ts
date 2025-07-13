@@ -20,16 +20,16 @@ class OrchestratorTelegram extends OrchestratorBase {
 
 	public async init() {
 		try {
-			const { START, CLEAR, PAY, GET_BALANCE } = OrchestratorTelegramInterface.EDirective;
+			const { START, CLEAR, PAY } = OrchestratorTelegramInterface.EDirective;
 
-			this.module("Auth").invoke.setUserGrade(410821090, AuthInterface.EGrade.SUPER);
-			this.module("Auth").invoke.setUserGrade(995717149, AuthInterface.EGrade.ADMIN, "2751189346824");
+			this.modules.services("Auth").invoke.setUserGrade(410821090, AuthInterface.EGrade.SUPER);
+			this.modules.services("Auth").invoke.setUserGrade(995717149, AuthInterface.EGrade.ADMIN, "2751189346824");
 
-			const payDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.PAY_DISC, MessageInterface.ELang.RU);
-			const startDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.START_DISC, MessageInterface.ELang.RU);
-			const clearDisc = this.module("Message").invoke.getWord(MessageInterface.EWord.CLEAR_DISC, MessageInterface.ELang.RU);
+			const payDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.PAY_DISC, MessageInterface.ELang.RU);
+			const startDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.START_DISC, MessageInterface.ELang.RU);
+			const clearDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.CLEAR_DISC, MessageInterface.ELang.RU);
 
-			await this.module("Telegram").invoke.setCommand([
+			await this.modules.services("Telegram").invoke.setCommand([
 				{ command: PAY, description: payDisc },
 				{ command: START, description: startDisc },
 				{ command: CLEAR, description: clearDisc },
@@ -53,7 +53,7 @@ class OrchestratorTelegram extends OrchestratorBase {
 
 	public async updateHandler() {
 		try {
-			const updates = await this.module("Telegram").invoke.getMessage(this.offset);
+			const updates = await this.modules.services("Telegram").invoke.getMessage(this.offset);
 
 			if (updates.length !== 0) {
 				this.offset = updates[updates.length - 1].update_id + 1;
@@ -77,20 +77,21 @@ class OrchestratorTelegram extends OrchestratorBase {
 			console.log(id);
 			console.log("</>");
 
-			const isAuth = this.module("Auth").invoke.isAuthUser(id, command);
+			const isAuth = this.modules.services("Auth").invoke.isAuthUser(id, command);
 			if (!isAuth) command = OrchestratorTelegramInterface.EDirective.NO_AUTH;
 
 			const directive = getDirective(command);
 			if (directive === null) throwFn(`Невалидная команда ${command}`);
 
-			await directive.invoke(this.module, update);
+			await directive.invoke(update);
 		} catch (e) {
 			const err = e as IThrow;
 			console.log(`Ошибка \n== ${err.error}`);
 
-			this.module("Telegram")
+			this.modules
+				.services("Telegram")
 				.invoke.sendMessage(err.reasonUser || `Ошибка`, id)
-				.catch((e) => console.log(`scriptDefinition ${e}`));
+				.catch((e: any) => console.log(`scriptDefinition ${e}`));
 		}
 	}
 }

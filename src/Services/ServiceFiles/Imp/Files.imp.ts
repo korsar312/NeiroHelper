@@ -4,9 +4,9 @@ import { ProjectInterface } from "../../../DI/Project.interface";
 
 class FilesImp implements FilesInterface.IAdapter {
 	private readonly connect: ConnectInterface.BaseClass;
-	protected Infrastructure: ProjectInterface.TDIInfrastructure;
+	protected Infrastructure: ProjectInterface.TInfrastructure;
 
-	constructor(Connection: ConnectInterface.BaseClass, Infrastructure: ProjectInterface.TDIInfrastructure) {
+	constructor(Connection: ConnectInterface.BaseClass, Infrastructure: ProjectInterface.TInfrastructure) {
 		this.connect = Connection;
 		this.Infrastructure = Infrastructure;
 	}

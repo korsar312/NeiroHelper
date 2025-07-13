@@ -1,41 +1,40 @@
-import { RegisterDirective } from "../Utils/ScriptRegistry";
-import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
+import { DirectiveBase } from "../DirectiveBase";
 import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
-import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
-import { parseCommand } from "../Utils/ScriptParse";
-import { ProjectInterface } from "../../../DI/Project.interface";
-import { Secret } from "../../../Config/Secret";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
+import { parseCommand } from "../Utils/ScriptParse";
 import { throwFn } from "../../../Utils";
+import { Secret } from "../../../Config/Secret";
+import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
 
-@RegisterDirective(OrchestratorTelegramInterface.EDirective.SAY)
-class Say implements OrchestratorTelegramInterface.IClass {
-	public async invoke(modules: ProjectInterface.TDIService, data: TelegramInterface.IUpdate) {
+export class Say extends DirectiveBase {
+	public async invoke(data: TelegramInterface.IUpdate) {
 		try {
-			if (data.message?.text) return await this.text(modules, parseCommand(data.message.text).text, scriptGetChatId(data));
+			if (data.message?.text) {
+				return await this.text(parseCommand(data.message.text).text, scriptGetChatId(data));
+			}
 		} catch (e) {
 			console.log(`Ошибка ответа нейросети \\n== ${e}`);
 			throwFn(`Ошибка ответа нейросети`, e);
 		}
 	}
 
-	async text(modules: ProjectInterface.TDIService, text: string, chatId: number) {
-		const wordGetTo = modules("Message").invoke.getWord(MessageInterface.EWord.GET_TO_LLM, MessageInterface.ELang.RU);
-		const instruct = await modules("Message").invoke.getSystemPromt();
+	async text(text: string, chatId: number) {
+		const wordGetTo = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.GET_TO_LLM, MessageInterface.ELang.RU);
+		const instruct = await this.modules.services("Message").invoke.getSystemPromt();
 
-		await modules("Telegram").invoke.sendMessage(wordGetTo, chatId);
+		await this.modules.services("Telegram").invoke.sendMessage(wordGetTo, chatId);
 
-		const history = await modules("History").invoke.getHistory(chatId, Secret.historyQty);
-		const generate = await modules("Inference").invoke.getPromt(text, instruct, "", history);
+		const history = await this.modules.services("History").invoke.getHistory(chatId, Secret.historyQty);
+		const generate = await this.modules.services("Inference").invoke.getPromt(text, instruct, "", history);
 
 		if (generate?.output_text === undefined) throwFn(`Отсутствие поля ответа \n== ${generate}`);
 		const reply = generate.output_text;
 
 		console.log(text + "\n", reply);
 
-		await modules("History").invoke.setHistory(chatId, new Date().getTime(), text, reply);
+		await this.modules.services("History").invoke.setHistory(chatId, new Date().getTime(), text, reply);
 
 		const chunks = reply.match(/[\s\S]{1,4000}(?=\s|$)/g) || [];
-		for (const chunk of chunks) await modules("Telegram").invoke.sendMessage(chunk, chatId, { parseMode: "HTML" });
+		for (const chunk of chunks) await this.modules.services("Telegram").invoke.sendMessage(chunk, chatId, { parseMode: "HTML" });
 	}
 }

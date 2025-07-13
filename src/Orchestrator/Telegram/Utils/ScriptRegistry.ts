@@ -1,13 +1,15 @@
 import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
+import { DirectiveBase } from "../DirectiveBase";
+import modules from "../../../DI";
 
-const registry = new Map<string, OrchestratorTelegramInterface.IClass>();
+const registry = new Map<string, DirectiveBase>();
 
 export function RegisterDirective(command: OrchestratorTelegramInterface.EDirective) {
-	return function (target: new () => OrchestratorTelegramInterface.IClass) {
-		registry.set(command, new target());
+	return function (target: new (params: OrchestratorTelegramInterface.TDirective) => DirectiveBase) {
+		registry.set(command, new target(modules));
 	};
 }
 
-export function getDirective(command: string): OrchestratorTelegramInterface.IClass | null {
+export function getDirective(command: string): DirectiveBase | null {
 	return registry.get(command) || null;
 }

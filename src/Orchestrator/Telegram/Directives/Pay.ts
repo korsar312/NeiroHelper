@@ -1,13 +1,12 @@
-import { RegisterDirective } from "../Utils/ScriptRegistry";
+import { DirectiveBase } from "../DirectiveBase";
+import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
+import { scriptGetChatId } from "../Utils/ScriptGetChatId";
+import { parseCommand } from "../Utils/ScriptParse";
+import { throwFn } from "../../../Utils";
 import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
-import { ProjectInterface } from "../../../DI/Project.interface";
-import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
 import { Secret } from "../../../Config/Secret";
 import CheckPay from "../../Script/CheckPay";
-import { parseCommand } from "../Utils/ScriptParse";
-import { scriptGetChatId } from "../Utils/ScriptGetChatId";
-import { throwFn } from "../../../Utils";
 
 const userPayList: Map<number, string> = new Map();
 const abortFn = new Map<number, AbortController>();
@@ -15,21 +14,20 @@ const abortFn = new Map<number, AbortController>();
 const forever = "Пожизненно";
 const cancel = "cancel";
 
-@RegisterDirective(OrchestratorTelegramInterface.EDirective.PAY)
-class Pay implements OrchestratorTelegramInterface.IClass {
-	public async invoke(modules: ProjectInterface.TDIService, data: TelegramInterface.IUpdate) {
+export class Pay extends DirectiveBase {
+	public async invoke(data: TelegramInterface.IUpdate) {
 		try {
 			const userId = scriptGetChatId(data);
 
 			const text = parseCommand(data.message?.text || data.callback_query?.data).text;
 			const messageId = data.callback_query?.message.message_id;
 
-			if (text === cancel) return await this.cancelPay(modules, userId, messageId);
+			if (text === cancel) return await this.cancelPay(userId, messageId);
 
 			if (userPayList.has(userId)) return;
 
-			if (text) return await this.offer(modules, text, userId, messageId);
-			if (!text) return await this.payChoice(modules, userId);
+			if (text) return await this.offer(text, userId, messageId);
+			if (!text) return await this.payChoice(userId);
 		} catch (e: any) {
 			throwFn(`Ошибка оплаты`, e);
 		}
@@ -53,21 +51,21 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 		}
 	}
 
-	async payChoice(modules: ProjectInterface.TDIService, chatId: number) {
+	async payChoice(chatId: number) {
 		try {
-			const wordInstruction = modules("Message").invoke.getWord(MessageInterface.EWord.CHOICE_PAY_DAY, MessageInterface.ELang.RU);
+			const wordInstruction = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.CHOICE_PAY_DAY, MessageInterface.ELang.RU);
 			const command = OrchestratorTelegramInterface.EDirective.PAY;
 
 			const variableSub = [1, 10, 30, forever];
 			const buttons: TelegramInterface.TButton = [variableSub.map((el) => ({ text: String(el), click: `${command} ${el}` }))];
 
-			await modules("Telegram").invoke.sendMessage(wordInstruction, chatId, { buttons });
+			await this.modules.services("Telegram").invoke.sendMessage(wordInstruction, chatId, { buttons });
 		} catch (e) {
 			throwFn(`Ошибка выбора оплаты`, e);
 		}
 	}
 
-	async offer(modules: ProjectInterface.TDIService, numberDay: number | string, chatId: number, messageId?: number) {
+	async offer(numberDay: number | string, chatId: number, messageId?: number) {
 		try {
 			userPayList.set(chatId, "");
 
@@ -87,18 +85,20 @@ class Pay implements OrchestratorTelegramInterface.IClass {
 			const formatFullPrise = await this.getUniqSum(payAmount);
 			userPayList.set(chatId, formatFullPrise);
 
-			const wordTRC20 = modules("Message").invoke.getWord(MessageInterface.EWord.TRC20, MessageInterface.ELang.RU);
-			const wordThrottle = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_THROTTLE, MessageInterface.ELang.RU);
-			const wordAddress = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_ADDRESS, MessageInterface.ELang.RU);
-			const wordSum = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_SUM, MessageInterface.ELang.RU);
-			const wordMinute = modules("Message").invoke.getWord(MessageInterface.EWord.TIME_LEFT, MessageInterface.ELang.RU);
-			const SubPeriod = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_PERIOD, MessageInterface.ELang.RU);
-			const wordFinish = modules("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_COMPLETE, MessageInterface.ELang.RU);
-			const wordInstruction = modules("Message").invoke.getWord(MessageInterface.EWord.PAY_INSTRUCTION, MessageInterface.ELang.RU, [
-				`<b>(${isInfinity ? forever : day})</b>`,
-				`<b>${formatFullPrise}</b>`,
-				`<b>${wordTRC20}</b>`,
-			]);
+			const wordTRC20 = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.TRC20, MessageInterface.ELang.RU);
+			const wordThrottle = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.PAY_THROTTLE, MessageInterface.ELang.RU);
+			const wordAddress = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.PAY_ADDRESS, MessageInterface.ELang.RU);
+			const wordSum = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.PAY_SUM, MessageInterface.ELang.RU);
+			const wordMinute = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.TIME_LEFT, MessageInterface.ELang.RU);
+			const SubPeriod = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_PERIOD, MessageInterface.ELang.RU);
+			const wordFinish = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.SUBSCRIBE_COMPLETE, MessageInterface.ELang.RU);
+			const wordInstruction = this.modules
+				.services("Message")
+				.invoke.getWord(MessageInterface.EWord.PAY_INSTRUCTION, MessageInterface.ELang.RU, [
+					`<b>(${isInfinity ? forever : day})</b>`,
+					`<b>${formatFullPrise}</b>`,
+					`<b>${wordTRC20}</b>`,
+				]);
 
 			const wordContract = `
 ${wordInstruction}\n
@@ -120,24 +120,26 @@ ${wordMinute}
 			};
 
 			const messageTimeLeft = messageId
-				? await modules("Telegram").invoke.editMessage(wordContract, chatId, messageId, options)
-				: await modules("Telegram").invoke.sendMessage(wordContract, chatId, options);
+				? await this.modules.services("Telegram").invoke.editMessage(wordContract, chatId, messageId, options)
+				: await this.modules.services("Telegram").invoke.sendMessage(wordContract, chatId, options);
 
 			const controller = new AbortController();
 			abortFn.set(chatId, controller);
 
-			await CheckPay(modules, address, formatFullPrise, lastMinute, controller.signal);
+			await CheckPay(this.modules, address, formatFullPrise, lastMinute, controller.signal);
 
-			const subscribeAfter = modules("Auth").invoke.addUserTime(chatId, day * 24);
+			const subscribeAfter = this.modules.services("Auth").invoke.addUserTime(chatId, day * 24);
 			const wordSubscribe = `${wordFinish} ${new Date(subscribeAfter).toLocaleDateString("ru-RU")}`;
 
-			await modules("Telegram").invoke.sendMessage(wordSubscribe, chatId);
+			await this.modules.services("Telegram").invoke.sendMessage(wordSubscribe, chatId);
 
 			userPayList.delete(chatId);
 
+			const services = this.modules.services;
+
 			function lastMinute(num: number) {
 				try {
-					modules("Telegram")
+					services("Telegram")
 						.invoke.editMessage(`${wordContract} ${num}`, chatId, messageTimeLeft.message_id, options)
 						.catch((e) => console.log(`lastMinute ${e}`));
 				} catch (e) {
@@ -153,13 +155,13 @@ ${wordMinute}
 		}
 	}
 
-	async cancelPay(modules: ProjectInterface.TDIService, chatId: number, messageId?: number) {
+	async cancelPay(chatId: number, messageId?: number) {
 		abortFn.get(chatId)?.abort();
 		const wordCancel = "Оплата была отменена пользователем";
 
 		messageId
-			? await modules("Telegram").invoke.editMessage(wordCancel, chatId, messageId)
-			: await modules("Telegram").invoke.sendMessage(wordCancel, chatId);
+			? await this.modules.services("Telegram").invoke.editMessage(wordCancel, chatId, messageId)
+			: await this.modules.services("Telegram").invoke.sendMessage(wordCancel, chatId);
 	}
 }
 

@@ -9,9 +9,9 @@ const { EType, ELink } = ConnectInterface;
 class TelegramImp implements TelegramInterface.IAdapter {
 	private readonly connect: ConnectInterface.BaseClass;
 	private readonly request: ConnectInterface.BaseClass["request"];
-	protected Infrastructure: ProjectInterface.TDIInfrastructure;
+	protected Infrastructure: ProjectInterface.TInfrastructure;
 
-	constructor(Connection: ConnectInterface.BaseClass, Infrastructure: ProjectInterface.TDIInfrastructure) {
+	constructor(Connection: ConnectInterface.BaseClass, Infrastructure: ProjectInterface.TInfrastructure) {
 		this.connect = Connection;
 		this.request = this.connect.request.bind(this.connect);
 		this.Infrastructure = Infrastructure;

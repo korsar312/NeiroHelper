@@ -6,9 +6,9 @@ import { listOfListsToCsv } from "../../../Utils";
 
 class MessageImp implements MessageInterface.IAdapter {
 	private readonly dictionary = Dictionary;
-	protected Infrastructure: ProjectInterface.TDIInfrastructure;
+	protected Infrastructure: ProjectInterface.TInfrastructure;
 
-	constructor(Infrastructure: ProjectInterface.TDIInfrastructure) {
+	constructor(Infrastructure: ProjectInterface.TInfrastructure) {
 		this.Infrastructure = Infrastructure;
 	}
 

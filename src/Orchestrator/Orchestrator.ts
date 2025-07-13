@@ -1,21 +1,14 @@
 import OrchestratorBase from "./OrchestratorBase";
 import { ProjectInterface } from "../DI/Project.interface";
 
-class Orchestrator {
+class Orchestrator extends OrchestratorBase {
 	private readonly platforms: OrchestratorBase[] = [];
-	private readonly Infrastructure: ProjectInterface.TDIInfrastructure;
-	private readonly module: ProjectInterface.TDIService;
 
-	constructor(Infrastructure: ProjectInterface.TDIInfrastructure, module: ProjectInterface.TDIService) {
-		this.Infrastructure = Infrastructure;
-		this.module = module;
+	public use(Platform: new (module: ProjectInterface.TDIModules) => OrchestratorBase) {
+		this.platforms.push(new Platform(this.modules));
 	}
 
-	public use(Platform: new (module: ProjectInterface.TDIService) => OrchestratorBase) {
-		this.platforms.push(new Platform(this.module));
-	}
-
-	public async start() {
+	public async invoke() {
 		for (const platform of this.platforms) platform.invoke();
 	}
 }

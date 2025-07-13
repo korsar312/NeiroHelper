@@ -23,9 +23,9 @@ const adminAccess = [
 ];
 
 class AuthImp implements AuthInterface.IAdapter {
-	protected Infrastructure: ProjectInterface.TDIInfrastructure;
+	protected Infrastructure: ProjectInterface.TInfrastructure;
 
-	constructor(Infrastructure: ProjectInterface.TDIInfrastructure) {
+	constructor(Infrastructure: ProjectInterface.TInfrastructure) {
 		this.Infrastructure = Infrastructure;
 	}
 
@@ -50,9 +50,9 @@ class AuthImp implements AuthInterface.IAdapter {
 		console.log(command);
 		console.log("=============");
 
-		if (isUser) return subscriptWorks ? userAccess.includes(command) : allAccess.includes(command);
-		if (isAdmin) return subscriptWorks && adminAccess.includes(command);
 		if (isSuper) return true;
+		if (isAdmin) return subscriptWorks && adminAccess.includes(command);
+		if (isUser) return subscriptWorks ? userAccess.includes(command) : allAccess.includes(command);
 
 		return false;
 	}

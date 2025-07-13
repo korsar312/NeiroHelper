@@ -4,10 +4,10 @@ import { TronWeb } from "tronweb";
 import { throwFn } from "../../../Utils";
 
 class PaymentImp implements PaymentInterface.IAdapter {
-	protected Infrastructure: ProjectInterface.TDIInfrastructure;
+	protected Infrastructure: ProjectInterface.TInfrastructure;
 	protected params: PaymentInterface.IParams;
 
-	constructor(Infrastructure: ProjectInterface.TDIInfrastructure, params: PaymentInterface.IParams) {
+	constructor(Infrastructure: ProjectInterface.TInfrastructure, params: PaymentInterface.IParams) {
 		this.Infrastructure = Infrastructure;
 		this.params = params;
 	}

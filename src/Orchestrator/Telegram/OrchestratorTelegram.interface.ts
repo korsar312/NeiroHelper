@@ -1,10 +1,7 @@
-import { TelegramInterface } from "../../Services/ServiceTelegram/Telegram.interface";
 import { ProjectInterface } from "../../DI/Project.interface";
 
 export namespace OrchestratorTelegramInterface {
-	export interface IClass {
-		invoke(modules: ProjectInterface.TDIService, data: TelegramInterface.IUpdate): Promise<void>;
-	}
+	export type TDirective = {} & ProjectInterface.TDIModules;
 
 	export enum EDirective {
 		SAY = "/say",

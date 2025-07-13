@@ -5,9 +5,9 @@ import { EasyInputMessage } from "openai/src/resources/responses/responses";
 
 class InferenceImp implements InferenceInterface.IAdapter {
 	private client: OpenAI | undefined;
-	protected Infrastructure: ProjectInterface.TDIInfrastructure;
+	protected Infrastructure: ProjectInterface.TInfrastructure;
 
-	constructor(token: string, Infrastructure: ProjectInterface.TDIInfrastructure) {
+	constructor(token: string, Infrastructure: ProjectInterface.TInfrastructure) {
 		this.client = new OpenAI({ apiKey: token });
 		this.Infrastructure = Infrastructure;
 	}

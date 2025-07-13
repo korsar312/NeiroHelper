@@ -4,7 +4,7 @@ import { throwFn } from "../../Utils";
 import { Secret } from "../../Config/Secret";
 
 async function CheckPay(
-	modules: ProjectInterface.TDIService,
+	modules: ProjectInterface.TDIModules,
 	address: string,
 	sum: string,
 	callback?: (timer: number) => void,
@@ -39,7 +39,8 @@ async function CheckPay(
 			}, 1000);
 
 			while (isCircle) {
-				const isExist = await modules("Payment")
+				const isExist = await modules
+					.services("Payment")
 					.invoke.isExistTransaction(address, timestamp, sum)
 					.catch((e) => console.log(`isExist ${e}`));
 
