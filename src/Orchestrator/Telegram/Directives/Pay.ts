@@ -126,6 +126,7 @@ ${wordMinute}
 			const controller = new AbortController();
 			abortFn.set(chatId, controller);
 
+			const services = this.modules.services;
 			await CheckPay(this.modules, address, formatFullPrise, lastMinute, controller.signal);
 
 			const subscribeAfter = this.modules.services("Auth").invoke.addUserTime(chatId, day * 24);
@@ -134,8 +135,6 @@ ${wordMinute}
 			await this.modules.services("Telegram").invoke.sendMessage(wordSubscribe, chatId);
 
 			userPayList.delete(chatId);
-
-			const services = this.modules.services;
 
 			function lastMinute(num: number) {
 				try {
