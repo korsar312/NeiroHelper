@@ -32,18 +32,20 @@ class OrchestratorTelegram extends OrchestratorBase {
 			this.modules.services("Auth").invoke.setUserGrade(410821090, AuthInterface.EGrade.SUPER);
 			this.modules.services("Auth").invoke.setUserGrade(995717149, AuthInterface.EGrade.ADMIN, "2751189346824");
 
-			const payDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.PAY_DISC, MessageInterface.ELang.RU);
-			const startDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.START_DISC, MessageInterface.ELang.RU);
-			const clearDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.CLEAR_DISC, MessageInterface.ELang.RU);
-			const learnDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.LEARN_DISC, MessageInterface.ELang.RU);
-			const CashOutDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.CASH_OUT_DISC, MessageInterface.ELang.RU);
-			const sendAllDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.SEND_ALL_DISC, MessageInterface.ELang.RU);
-			const AddUserDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.ADD_AUTH_DISC, MessageInterface.ELang.RU);
-			const DelUserDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.DEL_AUTH_DISC, MessageInterface.ELang.RU);
-			const transferDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.TRANSFER_DISC, MessageInterface.ELang.RU);
-			const getBalDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.GET_BALANCE_DISC, MessageInterface.ELang.RU);
-			const sendMesDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.SEND_MASSAGE_DISC, MessageInterface.ELang.RU);
-			const getAllUsDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.GET_ALL_USER_DISC, MessageInterface.ELang.RU);
+			const { RU } = MessageInterface.ELang;
+			const payDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.PAY_DISC, RU);
+			const startDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.START_DISC, RU);
+			const clearDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.CLEAR_DISC, RU);
+			const learnDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.LEARN_DISC, RU);
+			const CashOutDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.CASH_OUT_DISC, RU);
+			const sendAllDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.SEND_ALL_DISC, RU);
+			const AddUserDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.ADD_AUTH_DISC, RU);
+			const DelUserDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.DEL_AUTH_DISC, RU);
+			const transferDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.TRANSFER_DISC, RU);
+			const getBalDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.GET_BALANCE_DISC, RU);
+			const sendMesDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.SEND_MASSAGE_DISC, RU);
+			const getMyBalDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.GET_MY_BALANCE_DISC, RU);
+			const getAllUsDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.GET_ALL_USER_DISC, RU);
 
 			const allUser = this.modules.services("Auth").invoke.getAllUser();
 			const userGrade = allUser.reduce(
@@ -75,6 +77,7 @@ class OrchestratorTelegram extends OrchestratorBase {
 				{ command: OrchestratorTelegramInterface.EDirective.GET_BALANCE, description: getBalDisc },
 				{ command: OrchestratorTelegramInterface.EDirective.GET_ALL_USER, description: getAllUsDisc },
 				{ command: OrchestratorTelegramInterface.EDirective.SEND_MASSAGE, description: sendMesDisc },
+				{ command: OrchestratorTelegramInterface.EDirective.GET_MY_BALANCE, description: getMyBalDisc },
 			];
 
 			for (const el of [...userGrade.admin, ...userGrade.sup]) await this.modules.services("Telegram").invoke.setCommand(adminPull, el);
