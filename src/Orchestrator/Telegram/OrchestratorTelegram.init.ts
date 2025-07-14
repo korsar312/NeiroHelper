@@ -14,3 +14,4 @@ import "./Directives/SendMgs";
 import "./Directives/Start";
 import "./Directives/Trans";
 import "./Directives/SendAll";
+import "./Directives/GetMyBalance";
