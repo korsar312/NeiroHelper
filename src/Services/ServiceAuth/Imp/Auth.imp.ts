@@ -12,6 +12,7 @@ const userAccess = [...allAccess, OrchestratorTelegramInterface.EDirective.CLEAR
 
 const adminAccess = [
 	...userAccess,
+	OrchestratorTelegramInterface.EDirective.GET_MY_BALANCE,
 	OrchestratorTelegramInterface.EDirective.TRANSFER,
 	OrchestratorTelegramInterface.EDirective.GET_BALANCE,
 	OrchestratorTelegramInterface.EDirective.LEARN,
