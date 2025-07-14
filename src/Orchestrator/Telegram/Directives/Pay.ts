@@ -144,7 +144,7 @@ ${wordMinute}
 			function lastMinute(num: number) {
 				try {
 					services("Telegram")
-						.invoke.editMessage(`${wordContract} ${num}`, chatId, messageTimeLeft.message_id, options)
+						.invoke.editMessage(`${wordContract}${num}`, chatId, messageTimeLeft.message_id, options)
 						.catch((e) => console.log(`lastMinute ${e}`));
 				} catch (e) {
 					console.log(`lastMinute2 ${e}`);
