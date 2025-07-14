@@ -10,6 +10,7 @@ import { ProjectInterface } from "../../DI/Project.interface";
 import { RegisterDirective } from "./Utils/ScriptRegistry";
 
 type TRoleCommand = "admin" | "sup";
+const { RU } = MessageInterface.ELang;
 
 class OrchestratorTelegram extends OrchestratorBase {
 	private diDirective: RegisterDirective;
@@ -32,7 +33,6 @@ class OrchestratorTelegram extends OrchestratorBase {
 			this.modules.services("Auth").invoke.setUserGrade(410821090, AuthInterface.EGrade.SUPER);
 			this.modules.services("Auth").invoke.setUserGrade(995717149, AuthInterface.EGrade.ADMIN, "2751189346824");
 
-			const { RU } = MessageInterface.ELang;
 			const payDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.PAY_DISC, RU);
 			const startDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.START_DISC, RU);
 			const clearDisc = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.CLEAR_DISC, RU);
