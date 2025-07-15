@@ -18,6 +18,7 @@ import { ServicePayment } from "../Services/ServicePayment";
 import ConnectHTTP from "../Services/ServiceTelegram/Connect/HTTP/Connect.HTTP";
 import TelegramImp from "../Services/ServiceTelegram/Imp/Telegram.imp";
 import { ServiceTelegram } from "../Services/ServiceTelegram";
+import { Links } from "../Config/Links";
 
 const authImp = new AuthImp(Infrastructure.get);
 const auth = new ServiceAuth(authImp);
@@ -42,12 +43,12 @@ const paymentImp = new PaymentImp(Infrastructure.get, {
 	addressWalletCollector: Secret.addressWalletWork,
 	tokenWalletCollector: Secret.tokenWalletWork,
 
-	fullHost: Secret.fullHost,
+	fullHost: Links.fullHost,
 	USDT_CONTRACT: Secret.usdtContract,
 });
 const payment = new ServicePayment(paymentImp);
 
-const telegramConnect = new ConnectHTTP({ token: Secret.tokenTg, link: Secret.linkTg });
+const telegramConnect = new ConnectHTTP({ token: Secret.tokenTg, link: Links.linkTg });
 const telegramImp = new TelegramImp(telegramConnect, Infrastructure.get);
 const telegram = new ServiceTelegram(telegramImp);
 

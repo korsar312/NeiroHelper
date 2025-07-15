@@ -3,11 +3,11 @@ import { MessageInterface } from "../../../Services/ServiceMessage/Message.inter
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
 import { parseCommand } from "../Utils/ScriptParse";
 import { throwFn } from "../../../Utils";
-import { Secret } from "../../../Config/Secret";
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
 import { Directive } from "../../../index";
 import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
 import { FilesInterface } from "../../../Infrastructure/InfrastructureFiles/Files.interface";
+import { Const } from "../../../Config/Const";
 
 @Directive.register(OrchestratorTelegramInterface.EDirective.SAY)
 export class Say extends DirectiveBase {
@@ -28,7 +28,7 @@ export class Say extends DirectiveBase {
 
 		await this.modules.services("Telegram").invoke.sendMessage(wordGetTo, chatId);
 
-		const history = await this.modules.services("History").invoke.getHistory(chatId, Secret.historyQty);
+		const history = await this.modules.services("History").invoke.getHistory(chatId, Const.historyQty);
 		const generate = await this.modules.services("Inference").invoke.getPromt(text, instruct, "", history);
 
 		if (generate?.output_text === undefined) throwFn(`Отсутствие поля ответа \n== ${generate}`);

@@ -9,6 +9,7 @@ import { Secret } from "../../../Config/Secret";
 import CheckPay from "../../Script/CheckPay";
 import { Directive } from "../../../index";
 import { FilesInterface } from "../../../Infrastructure/InfrastructureFiles/Files.interface";
+import { Const } from "../../../Config/Const";
 
 const userPayList: Map<number, string> = new Map();
 const abortFn = new Map<number, AbortController>();
@@ -83,7 +84,7 @@ export class Pay extends DirectiveBase {
 			}
 
 			const address = Secret.addressWalletWork;
-			const payAmount = isInfinity ? 9999 : +Secret.payToDay * day;
+			const payAmount = isInfinity ? 9999 : +Const.payToDay * day;
 
 			const formatFullPrise = await this.getUniqSum(payAmount);
 			userPayList.set(chatId, formatFullPrise);

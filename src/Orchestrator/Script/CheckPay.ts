@@ -1,7 +1,7 @@
 import { ProjectInterface } from "../../DI/Project.interface";
 import { clearInterval } from "node:timers";
 import { throwFn } from "../../Utils";
-import { Secret } from "../../Config/Secret";
+import { Const } from "../../Config/Const";
 
 async function CheckPay(
 	modules: ProjectInterface.TDIModules,
@@ -12,7 +12,7 @@ async function CheckPay(
 ) {
 	let count = 0;
 	let isCircle = true;
-	const maxCount = Secret.awaitPay;
+	const maxCount = Const.awaitPay;
 
 	try {
 		const timestamp = String(new Date().getTime());

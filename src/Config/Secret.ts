@@ -8,12 +8,5 @@ export const Secret = {
 	addressWalletSuper: process.env.ADDRESS_WALLET_SUPER || "",
 	addressWalletWork: process.env.ADDRESS_WALLET_WORK || "",
 	tokenWalletWork: process.env.TOKEN_WALLET_WORK || "",
-	linkTg: "https://api.telegram.org",
-	fullHost: "https://api.trongrid.io",
 	usdtContract: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-	payToDay: process.env.PAY_TO_DAY || 100,
-	historyQty: 20,
-	awaitPay: 500,
-	superPartPercent: 25,
-	chanelTg: "https://t.me/+SP3R7ofDDhYyZGZi",
 };

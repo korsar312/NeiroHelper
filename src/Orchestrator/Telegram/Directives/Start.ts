@@ -2,9 +2,9 @@ import { DirectiveBase } from "../DirectiveBase";
 import { MessageInterface } from "../../../Services/ServiceMessage/Message.interface";
 import { scriptGetChatId } from "../Utils/ScriptGetChatId";
 import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface";
-import { Secret } from "../../../Config/Secret";
 import { TelegramInterface } from "../../../Services/ServiceTelegram/Telegram.interface";
 import { Directive } from "../../../index";
+import { Links } from "../../../Config/Links";
 
 @Directive.register(OrchestratorTelegramInterface.EDirective.START)
 export class Start extends DirectiveBase {
@@ -20,11 +20,11 @@ export class Start extends DirectiveBase {
 		const wordSubscribe = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.CHANNEL_LINK, MessageInterface.ELang.RU);
 		const wordPay = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.BUY_BOT_SUBSCRIBE, MessageInterface.ELang.RU);
 
-		const wordConcat = `${wordHello}\n\n<a href="${Secret.chanelTg}">${wordChanel}</a>\n\n${wordInstruction}\n\n${wordYourId} <b>${userId}</b> \n\n${wordForWork} ${OrchestratorTelegramInterface.EDirective.PAY}`;
+		const wordConcat = `${wordHello}\n\n<a href="${Links.chanelTg}">${wordChanel}</a>\n\n${wordInstruction}\n\n${wordYourId} <b>${userId}</b> \n\n${wordForWork} ${OrchestratorTelegramInterface.EDirective.PAY}`;
 
 		await this.modules.services("Telegram").invoke.sendMessage(wordConcat, userId, {
 			parseMode: "HTML",
-			buttons: [[{ text: wordSubscribe, url: Secret.chanelTg }], [{ text: wordPay, click: OrchestratorTelegramInterface.EDirective.PAY }]],
+			buttons: [[{ text: wordSubscribe, url: Links.chanelTg }], [{ text: wordPay, click: OrchestratorTelegramInterface.EDirective.PAY }]],
 		});
 	}
 }
