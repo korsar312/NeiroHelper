@@ -32,8 +32,9 @@ export class Say extends DirectiveBase {
 
 		await this.modules.services("Telegram").invoke.sendMessage(wordStart, chatId, { parseMode: "HTML" });
 
+		const date = new Date().toLocaleDateString("ru-RU");
 		const history = await this.modules.services("History").invoke.getHistory(chatId, Const.historyQty);
-		const generate = await this.modules.services("Inference").invoke.getPromt(text, instruct, "", history);
+		const generate = await this.modules.services("Inference").invoke.getPromt(text, instruct, `Сейчас ${date}`, history);
 
 		if (generate?.output_text === undefined) throwFn(`Отсутствие поля ответа \n== ${generate}`);
 		const reply = generate.output_text;
