@@ -24,9 +24,13 @@ export class Say extends DirectiveBase {
 
 	async text(text: string, chatId: number) {
 		const wordGetTo = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.GET_TO_LLM, MessageInterface.ELang.RU);
+		const wordAdvice = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.PLEASE_CLEAR, MessageInterface.ELang.RU);
+		const comClear = OrchestratorTelegramInterface.EDirective.CLEAR;
+		const wordStart = `${wordGetTo}\n\n<b>${wordAdvice}</b> ${comClear}`;
+
 		const instruct = await this.modules.services("Message").invoke.getSystemPromt();
 
-		await this.modules.services("Telegram").invoke.sendMessage(wordGetTo, chatId);
+		await this.modules.services("Telegram").invoke.sendMessage(wordStart, chatId, { parseMode: "HTML" });
 
 		const history = await this.modules.services("History").invoke.getHistory(chatId, Const.historyQty);
 		const generate = await this.modules.services("Inference").invoke.getPromt(text, instruct, "", history);

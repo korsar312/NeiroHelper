@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "main": "Start.ts",
   "scripts": {
-    "start": "tsx src/index.ts",
+    "start": "npx cross-env IS_DEV=1 tsx src/index.ts",
     "test": "tsx src/Test/di.test.ts",
     "build": "tsx build.ts"
   },
@@ -31,6 +31,7 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.15.33",
     "@vercel/ncc": "^0.38.3",
+    "cross-env": "^7.0.3",
     "pkg": "^5.8.1",
     "prettier": "3.3.3",
     "tsx": "^4.19.1",

@@ -58,6 +58,7 @@ export namespace MessageInterface {
 		TEXT_WILL_BE_SAVE = "TEXT_WILL_BE_SAVE",
 		SAVE_TEXT = "SAVE_TEXT",
 		GET_TO_LLM = "GET_TO_LLM",
+		PLEASE_CLEAR = "PLEASE_CLEAR",
 	}
 
 	export enum ELang {

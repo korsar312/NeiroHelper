@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 export const Secret = {
-	tokenTg: process.env.TOKEN_TG || "",
+	tokenTg: process.env.IS_DEV ? process.env.TOKEN_TG_TEST : process.env.TOKEN_TG || "",
 	openAiToken: process.env.OPENAI_TOKEN || "",
 	addressWalletPidor: process.env.ADDRESS_WALLET_PIDOR || "",
 	addressWalletSuper: process.env.ADDRESS_WALLET_SUPER || "",
