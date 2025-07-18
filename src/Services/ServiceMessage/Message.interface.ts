@@ -8,6 +8,8 @@ export namespace MessageInterface {
 	}
 
 	export enum EWord {
+		DAY_US_USDT = "DAY_US_USDT",
+		STOCK = "STOCK",
 		LEARN_DISC = "LEARN_DISC",
 		CASH_OUT_DISC = "CASH_OUT_DISC",
 		SEND_ALL_DISC = "SEND_ALL_DISC",

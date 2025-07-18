@@ -10,6 +10,7 @@ import CheckPay from "../../Script/CheckPay";
 import { Directive } from "../../../index";
 import { FilesInterface } from "../../../Infrastructure/InfrastructureFiles/Files.interface";
 import { Const } from "../../../Config/Const";
+import { discount } from "../../../Config/Discount";
 
 const userPayList: Map<number, string> = new Map();
 const abortFn = new Map<number, AbortController>();
@@ -58,12 +59,24 @@ export class Pay extends DirectiveBase {
 	async payChoice(chatId: number) {
 		try {
 			const wordInstruction = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.CHOICE_PAY_DAY, MessageInterface.ELang.RU);
+			const wordDiscount = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.STOCK, MessageInterface.ELang.RU);
+			const wordStock = discount.reduce((prev, cur) => prev + `• ${cur.text}\n`, "");
+			const wordStockAll = wordStock.length ? `\n\n${wordDiscount}:\n<blockquote>${wordStock}</blockquote>` : ``;
+			const wordChoice = `${wordInstruction}${wordStockAll}`;
+
 			const command = OrchestratorTelegramInterface.EDirective.PAY;
+			const constVar = [1, 10, 30, forever].filter((el) => !discount.find((dis) => dis.value === el));
 
-			const variableSub = [1, 10, 30, forever];
-			const buttons: TelegramInterface.TButton = [variableSub.map((el) => ({ text: String(el), click: `${command} ${el}` }))];
+			const wordDayUs = (day: number, price: number) => {
+				return this.modules.services("Message").invoke.getWord(MessageInterface.EWord.DAY_US_USDT, MessageInterface.ELang.RU, [day, price]);
+			};
 
-			await this.modules.services("Telegram").invoke.sendMessage(wordInstruction, chatId, { buttons });
+			const buttons: TelegramInterface.TButton = [
+				constVar.map((el) => ({ text: String(el), click: `${command} ${el}` })),
+				...discount.map((el) => [{ text: wordDayUs(el.value, el.price || 9999), click: `${command} ${el.value}` }]),
+			];
+
+			await this.modules.services("Telegram").invoke.sendMessage(wordChoice, chatId, { buttons, parseMode: "HTML" });
 		} catch (e) {
 			throwFn(`Ошибка выбора оплаты`, e);
 		}
@@ -84,7 +97,7 @@ export class Pay extends DirectiveBase {
 			}
 
 			const address = Secret.addressWalletWork;
-			const payAmount = isInfinity ? 9999 : +Const.payToDay * day;
+			const payAmount = isInfinity ? 9999 : getPrice(day);
 
 			const formatFullPrise = await this.getUniqSum(payAmount);
 			userPayList.set(chatId, formatFullPrise);
@@ -176,4 +189,10 @@ function formatMicroUsdt(v: string) {
 
 function delay(ms: number): Promise<void> {
 	return new Promise((res) => setTimeout(res, ms));
+}
+
+function getPrice(day: number | string): number {
+	const dis = discount.find((el) => el.value === day);
+
+	return dis ? dis.price : +Const.payToDay * +day;
 }

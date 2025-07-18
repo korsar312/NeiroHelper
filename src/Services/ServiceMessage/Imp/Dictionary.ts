@@ -1,6 +1,12 @@
 import { MessageInterface } from "../Message.interface";
 
 const Dictionary: MessageInterface.TDictionary = {
+	DAY_US_USDT: {
+		RU: "{{1}} дней за {{2}}",
+	},
+	STOCK: {
+		RU: "Наши акции",
+	},
 	MESSAGE_SEND: {
 		RU: "Сообщение отправлено",
 	},
