@@ -2,7 +2,7 @@ import { MessageInterface } from "../Message.interface";
 
 const Dictionary: MessageInterface.TDictionary = {
 	DAY_US_USDT: {
-		RU: "{{1}} дней за {{2}}",
+		RU: "{{1}} дней за {{2}} {{3}}",
 	},
 	STOCK: {
 		RU: "Наши акции",
@@ -101,7 +101,7 @@ const Dictionary: MessageInterface.TDictionary = {
 		RU: "Ваш персональный айди:",
 	},
 	USDT: {
-		RU: "USDT:",
+		RU: "USDT",
 	},
 	SUBSCRIBE_PERIOD: {
 		RU: "Дней подписки:",

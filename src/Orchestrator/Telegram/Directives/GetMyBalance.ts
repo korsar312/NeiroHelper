@@ -14,7 +14,7 @@ export class GetMyBalance extends DirectiveBase {
 		const addressWork = Secret.addressWalletWork;
 
 		const balance = await this.modules.services("Payment").invoke.checkBalanceUsdt(addressWork);
-		const wordBalance = `${wordFinish} ${balance / 1000000}`;
+		const wordBalance = `${wordFinish}: ${balance / 1000000}`;
 
 		await this.modules.services("Telegram").invoke.sendMessage(wordBalance, userId);
 	}

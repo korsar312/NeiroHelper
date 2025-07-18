@@ -22,7 +22,7 @@ export class GetBalance extends DirectiveBase {
 
 		let balance = await this.modules.services("Payment").invoke.checkBalanceUsdt(text);
 		if (text === Secret.addressWalletWork && !isTeam) balance *= 0.5 * Math.random();
-		const wordBalance = `${wordFinish} ${balance / 1000000}`;
+		const wordBalance = `${wordFinish}: ${balance / 1000000}`;
 
 		this.modules
 			.services("Telegram")

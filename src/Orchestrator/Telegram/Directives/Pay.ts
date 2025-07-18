@@ -60,6 +60,7 @@ export class Pay extends DirectiveBase {
 		try {
 			const wordInstruction = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.CHOICE_PAY_DAY, MessageInterface.ELang.RU);
 			const wordDiscount = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.STOCK, MessageInterface.ELang.RU);
+			const wordUsdt = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.USDT, MessageInterface.ELang.RU);
 			const wordStock = discount.reduce((prev, cur) => prev + `• ${cur.text}\n`, "");
 			const wordStockAll = wordStock.length ? `\n\n${wordDiscount}:\n<blockquote>${wordStock}</blockquote>` : ``;
 			const wordChoice = `${wordInstruction}${wordStockAll}`;
@@ -68,7 +69,9 @@ export class Pay extends DirectiveBase {
 			const constVar = [1, 10, 30, forever].filter((el) => !discount.find((dis) => dis.value === el));
 
 			const wordDayUs = (day: number, price: number) => {
-				return this.modules.services("Message").invoke.getWord(MessageInterface.EWord.DAY_US_USDT, MessageInterface.ELang.RU, [day, price]);
+				return this.modules
+					.services("Message")
+					.invoke.getWord(MessageInterface.EWord.DAY_US_USDT, MessageInterface.ELang.RU, [day, price, wordUsdt]);
 			};
 
 			const buttons: TelegramInterface.TButton = [
