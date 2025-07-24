@@ -13,7 +13,7 @@ export class CashOut extends DirectiveBase {
 		const userId = scriptGetChatId(data);
 		const wordFinish = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.CASH_OUT, MessageInterface.ELang.RU);
 
-		const totalCash = await this.modules.services("Payment").invoke.checkBalanceUsdt(Secret.addressWalletWork);
+		const totalCash = await this.modules.services("Payment").invoke.checkBalanceUsdt(Secret.addressWalletWork[0]);
 
 		const totalCashTest = totalCash / 1000000;
 
