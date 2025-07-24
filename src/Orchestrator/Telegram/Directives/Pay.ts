@@ -18,6 +18,8 @@ const abortFn = new Map<number, AbortController>();
 const forever = "Пожизненно";
 const cancel = "cancel";
 
+let isFakeWallet = false;
+
 @Directive.register(OrchestratorTelegramInterface.EDirective.PAY)
 export class Pay extends DirectiveBase {
 	public async invoke(data: TelegramInterface.IUpdate) {
@@ -99,7 +101,13 @@ export class Pay extends DirectiveBase {
 				if (day > 1000) throwFn({ reasonUser: `Количество дней превышает возможное` });
 			}
 
-			const address = Secret.addressWalletWork;
+			let address: string;
+
+			if (isFakeWallet) address = Secret.addressWalletWork[0];
+			else address = Secret.addressWalletWork[1];
+
+			isFakeWallet = !isFakeWallet;
+
 			const payAmount = isInfinity ? 9999 : getPrice(day);
 
 			const formatFullPrise = await this.getUniqSum(payAmount);

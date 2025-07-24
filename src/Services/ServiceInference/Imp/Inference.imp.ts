@@ -4,11 +4,12 @@ import { ProjectInterface } from "../../../DI/Project.interface";
 import { EasyInputMessage } from "openai/src/resources/responses/responses";
 
 class InferenceImp implements InferenceInterface.IAdapter {
-	private client: OpenAI | undefined;
+	private clients: OpenAI[] = [];
+	private clientCount = 0;
 	protected Infrastructure: ProjectInterface.TInfrastructure;
 
-	constructor(token: string, Infrastructure: ProjectInterface.TInfrastructure) {
-		this.client = new OpenAI({ apiKey: token });
+	constructor(tokens: string[], Infrastructure: ProjectInterface.TInfrastructure) {
+		this.clients = tokens.map((token) => new OpenAI({ apiKey: token }));
 		this.Infrastructure = Infrastructure;
 	}
 
@@ -27,9 +28,9 @@ class InferenceImp implements InferenceInterface.IAdapter {
 		const contextPrompt = createInput("developer", context);
 		const userPrompt = createInput("user", question);
 
-		return this.client?.responses.create({
+		return this.clients[this.getCount()]?.responses.create({
 			/** Модель для ответа */
-			model: "gpt-4.1-mini-2025-04-14",
+			model: "gpt-4.1",
 
 			/** Список сообщений, передаваемых в модель в данном запросе */
 			input: [systemPrompt, contextPrompt, ...historyPrompt, userPrompt],
@@ -55,6 +56,15 @@ class InferenceImp implements InferenceInterface.IAdapter {
 			/** Модель для ответа*/
 			store: false,
 		});
+	}
+
+	private getCount() {
+		const count = this.clientCount;
+
+		if (this.clientCount + 1 > this.clients.length - 1) this.clientCount = 0;
+		else this.clientCount += 1;
+
+		return count;
 	}
 }
 

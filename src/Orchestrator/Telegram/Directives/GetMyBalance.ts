@@ -13,9 +13,13 @@ export class GetMyBalance extends DirectiveBase {
 		const wordFinish = this.modules.services("Message").invoke.getWord(MessageInterface.EWord.USDT, MessageInterface.ELang.RU);
 		const addressWork = Secret.addressWalletWork;
 
-		const balance = await this.modules.services("Payment").invoke.checkBalanceUsdt(addressWork);
-		const wordBalance = `${wordFinish}: ${balance / 1000000}`;
+		let sumText = "";
 
-		await this.modules.services("Telegram").invoke.sendMessage(wordBalance, userId);
+		for (const el of addressWork) {
+			const sum = await this.modules.services("Payment").invoke.checkBalanceUsdt(el);
+			sumText += `${wordFinish}: ${sum / 1000000}\n`;
+		}
+
+		await this.modules.services("Telegram").invoke.sendMessage(sumText, userId);
 	}
 }

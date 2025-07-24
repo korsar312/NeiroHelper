@@ -37,13 +37,7 @@ const messageImp = new MessageImp(Infrastructure.get);
 const message = new ServiceMessage(messageImp);
 
 const paymentImp = new PaymentImp(Infrastructure.get, {
-	addressWalletMain: Secret.addressWalletSuper,
-	addressWalletSecond: Secret.addressWalletPidor,
-
-	addressWalletCollector: Secret.addressWalletWork,
 	tokenWalletCollector: Secret.tokenWalletWork,
-
-	fullHost: Links.fullHost,
 	USDT_CONTRACT: Secret.usdtContract,
 });
 const payment = new ServicePayment(paymentImp);

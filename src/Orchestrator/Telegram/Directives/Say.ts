@@ -9,15 +9,21 @@ import { OrchestratorTelegramInterface } from "../OrchestratorTelegram.interface
 import { FilesInterface } from "../../../Infrastructure/InfrastructureFiles/Files.interface";
 import { Const } from "../../../Config/Const";
 
+const userSayList: Set<number> = new Set();
+
 @Directive.register(OrchestratorTelegramInterface.EDirective.SAY)
 export class Say extends DirectiveBase {
 	public async invoke(data: TelegramInterface.IUpdate) {
+		const userId = scriptGetChatId(data);
+
+		if (userSayList.has(userId)) return;
+
+		userSayList.add(userId);
+
 		try {
-			if (data.message?.text) {
-				return await this.text(parseCommand(data.message.text).text, scriptGetChatId(data));
-			}
+			if (data.message?.text) return await this.text(parseCommand(data.message.text).text, userId);
 		} catch (e) {
-			console.log(`Ошибка ответа нейросети \\n== ${e}`);
+			userSayList.delete(userId);
 			throwFn(`Ошибка ответа нейросети`, e);
 		}
 	}
@@ -34,10 +40,12 @@ export class Say extends DirectiveBase {
 
 		const date = new Date().toLocaleDateString("ru-RU");
 		const history = await this.modules.services("History").invoke.getHistory(chatId, Const.historyQty);
+
 		const generate = await this.modules.services("Inference").invoke.getPromt(text, instruct, `Сейчас ${date}`, history);
 
 		if (generate?.output_text === undefined) throwFn(`Отсутствие поля ответа \n== ${generate}`);
 		const reply = generate.output_text;
+
 		const log = { userId: chatId, date: new Date().toLocaleString("ru-RU"), question: text, answer: reply };
 
 		console.log(text + "\n", reply);
@@ -45,5 +53,7 @@ export class Say extends DirectiveBase {
 		await this.modules.services("History").invoke.setHistory(chatId, new Date().getTime(), text, reply);
 		await this.modules.services("Telegram").invoke.sendManyMessage(reply, chatId, { parseMode: "HTML" });
 		await this.modules.infrastructure("Files").invoke.addToFile(FilesInterface.FilePath.LOG_SAY(), JSON.stringify(log));
+
+		userSayList.delete(chatId);
 	}
 }

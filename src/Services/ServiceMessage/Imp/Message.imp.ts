@@ -23,14 +23,11 @@ class MessageImp implements MessageInterface.IAdapter {
 	public async getSystemPromt() {
 		const instruct = await this.getSystemMassage();
 		const context = await this.getSystemContext();
-		const statistic = await this.getSystemStat();
 
 		return `
 			${instruct}
 			
 			${context}
-			
-			${statistic}
 		`;
 	}
 

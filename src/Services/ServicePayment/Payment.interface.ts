@@ -14,12 +14,8 @@ export namespace PaymentInterface {
 	}
 
 	export interface IParams {
-		fullHost: string;
-		USDT_CONTRACT: string;
-		addressWalletMain: string;
 		tokenWalletCollector: string;
-		addressWalletSecond: string;
-		addressWalletCollector: string;
+		USDT_CONTRACT: string;
 	}
 
 	export interface IWallet {
