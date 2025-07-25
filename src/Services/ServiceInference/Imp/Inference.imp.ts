@@ -38,6 +38,8 @@ class InferenceImp implements InferenceInterface.IAdapter {
 			} catch (e: any) {
 				if (e.status === 429) {
 					console.log(`${model} не доступна`);
+					await sleep(20);
+
 					continue;
 				}
 				throw e;
@@ -110,10 +112,15 @@ function createInput(role: EasyInputMessage["role"], text: string): EasyInputMes
 }
 
 function* modelGenerator() {
+	yield "gpt-4.1";
 	yield "gpt-4.1-2025-04-14";
 	yield "gpt-4.1";
 	yield "gpt-4o";
 	yield "gpt-4.1-mini-2025-04-14";
+}
+
+function sleep(time: number) {
+	return new Promise((res) => setTimeout(res, time * 1000));
 }
 
 export default InferenceImp;
