@@ -45,7 +45,9 @@ class InferenceImp implements InferenceInterface.IAdapter {
 	}
 
 	private getResponse(model: ResponsesModel, prompt: OpenAI.Responses.ResponseInput) {
-		return this.clients[this.getCount()]?.responses.create({
+		const count = this.getCount();
+
+		return this.clients[count]?.responses.create({
 			/** Модель для ответа */
 			model,
 
