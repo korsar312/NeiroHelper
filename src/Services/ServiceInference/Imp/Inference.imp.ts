@@ -2,6 +2,7 @@ import { OpenAI } from "openai";
 import { InferenceInterface } from "../Inference.interface";
 import { ProjectInterface } from "../../../DI/Project.interface";
 import { EasyInputMessage } from "openai/src/resources/responses/responses";
+import ResponsesModel = OpenAI.ResponsesModel;
 
 class InferenceImp implements InferenceInterface.IAdapter {
 	private clients: OpenAI[] = [];
@@ -28,12 +29,28 @@ class InferenceImp implements InferenceInterface.IAdapter {
 		const contextPrompt = createInput("developer", context);
 		const userPrompt = createInput("user", question);
 
+		const promt = [systemPrompt, contextPrompt, ...historyPrompt, userPrompt];
+
+		for (const model of modelGenerator()) {
+			try {
+				return await this.getResponse(model, promt);
+			} catch (e: any) {
+				if (e.status === 429) {
+					console.log(`${model} не доступна`);
+					continue;
+				}
+				throw e;
+			}
+		}
+	}
+
+	private getResponse(model: ResponsesModel, prompt: OpenAI.Responses.ResponseInput) {
 		return this.clients[this.getCount()]?.responses.create({
 			/** Модель для ответа */
-			model: "gpt-4.1",
+			model,
 
 			/** Список сообщений, передаваемых в модель в данном запросе */
-			input: [systemPrompt, contextPrompt, ...historyPrompt, userPrompt],
+			input: prompt,
 
 			/** Определяет формат вывода ответа */
 			text: { format: { type: "text" } },
@@ -85,6 +102,13 @@ function createInput(role: EasyInputMessage["role"], text: string): EasyInputMes
 	}
 
 	return { role, content } as EasyInputMessage;
+}
+
+function* modelGenerator() {
+	yield "gpt-4.1-2025-04-14";
+	yield "gpt-4.1";
+	yield "gpt-4o";
+	yield "gpt-4.1-mini-2025-04-14";
 }
 
 export default InferenceImp;
