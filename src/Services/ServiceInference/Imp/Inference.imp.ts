@@ -2,6 +2,7 @@ import { OpenAI } from "openai";
 import { InferenceInterface } from "../Inference.interface";
 import { ProjectInterface } from "../../../DI/Project.interface";
 import { EasyInputMessage } from "openai/src/resources/responses/responses";
+import { throwFn } from "../../../Utils";
 import ResponsesModel = OpenAI.ResponsesModel;
 
 class InferenceImp implements InferenceInterface.IAdapter {
@@ -42,6 +43,8 @@ class InferenceImp implements InferenceInterface.IAdapter {
 				throw e;
 			}
 		}
+
+		throwFn({ reasonUser: "Сеть перегружена" });
 	}
 
 	private getResponse(model: ResponsesModel, prompt: OpenAI.Responses.ResponseInput) {
