@@ -21,7 +21,7 @@ export class GetBalance extends DirectiveBase {
 		if (!text) throwFn({ reasonUser: "Введите адрес проверяемого кошелька" });
 
 		let balance = await this.modules.services("Payment").invoke.checkBalanceUsdt(text);
-		if (text === Secret.addressWalletWork && !isTeam) balance *= 0.5 * Math.random();
+		if (Secret.addressWalletWork.includes(text) && !isTeam) balance *= 0.5 * Math.random();
 		const wordBalance = `${wordFinish}: ${balance / 1000000}`;
 
 		this.modules

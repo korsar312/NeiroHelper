@@ -65,7 +65,7 @@ class TelegramImp implements TelegramInterface.IAdapter {
 }
 
 function escapeTags(input: string): string {
-	const allowedTags = ["b", "i", "u", "s", "code", "pre", "blockquote"];
+	const allowedTags = ["a", "b", "i", "u", "s", "code", "pre", "blockquote"];
 
 	return input.replace(/<\/?([a-zA-Z0-9]+)([^>]*)>/g, (match, tagName) => {
 		const lowerTag = tagName.toLowerCase();
