@@ -48,6 +48,7 @@ export class Say extends DirectiveBase {
 
 		const log = { userId: chatId, date: new Date().toLocaleString("ru-RU"), question: text, answer: reply };
 
+		console.log(JSON.stringify({ ...generate, output_text: "" }, undefined, 2));
 		console.log(text + "\n", reply);
 
 		await this.modules.services("History").invoke.setHistory(chatId, new Date().getTime(), text, reply);

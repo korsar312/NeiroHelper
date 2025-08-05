@@ -37,6 +37,7 @@ class InferenceImp implements InferenceInterface.IAdapter {
 				return await this.getResponse(model, promt);
 			} catch (e: any) {
 				if (e.status === 429) {
+					console.log(JSON.stringify(e, undefined, 2));
 					console.log(`${model} не доступна`);
 					await sleep(20);
 

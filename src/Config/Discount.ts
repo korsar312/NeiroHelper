@@ -5,9 +5,9 @@ export type TDiscount = {
 };
 
 export const discount: TDiscount[] = [
-	{
-		text: "Только на эти выходные цена одного дня снижена на 40%",
-		value: 1,
-		price: 60,
-	},
+	//{
+	//	text: "Только на эти выходные цена одного дня снижена на 40%",
+	//	value: 1,
+	//	price: 60,
+	//},
 ];
