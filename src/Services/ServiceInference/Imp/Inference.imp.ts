@@ -32,14 +32,17 @@ class InferenceImp implements InferenceInterface.IAdapter {
 
 		const promt = [systemPrompt, contextPrompt, ...historyPrompt, userPrompt];
 
+		const count = this.getCount();
+
 		for (const model of modelGenerator()) {
 			try {
-				return await this.getResponse(model, promt);
+				console.log(`Попытка: ${model}, ${count}`)
+				return await this.getResponse(count, model, promt);
 			} catch (e: any) {
 				if (e.status === 429) {
 					console.log(JSON.stringify(e, undefined, 2));
 					console.log(`${model} не доступна`);
-					await sleep(20);
+					await sleep(10);
 
 					continue;
 				}
@@ -50,9 +53,7 @@ class InferenceImp implements InferenceInterface.IAdapter {
 		throwFn({ reasonUser: "Сеть перегружена" });
 	}
 
-	private getResponse(model: ResponsesModel, prompt: OpenAI.Responses.ResponseInput) {
-		const count = this.getCount();
-
+	private getResponse(count:number, model: ResponsesModel, prompt: OpenAI.Responses.ResponseInput) {
 		return this.clients[count]?.responses.create({
 			/** Модель для ответа */
 			model,
@@ -113,9 +114,9 @@ function createInput(role: EasyInputMessage["role"], text: string): EasyInputMes
 }
 
 function* modelGenerator() {
-	yield "gpt-4.1";
 	yield "gpt-4.1-2025-04-14";
 	yield "gpt-4o";
+	yield "gpt-4.1";
 	yield "gpt-4.1-mini-2025-04-14";
 }
 
