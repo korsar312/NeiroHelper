@@ -1,0 +1,17 @@
+import "../../index";
+import "./OrchestratorTelegram.interface";
+import "./Directives/AddAuth";
+import "./Directives/CashOut";
+import "./Directives/Clear";
+import "./Directives/DeleteAuth";
+import "./Directives/GetBalance";
+import "./Directives/GetUserList";
+import "./Directives/Learn";
+import "./Directives/NoAuth";
+import "./Directives/Pay";
+import "./Directives/Say";
+import "./Directives/SendMgs";
+import "./Directives/Start";
+import "./Directives/Trans";
+import "./Directives/SendAll";
+import "./Directives/GetMyBalance";

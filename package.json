@@ -1,0 +1,54 @@
+{
+  "name": "neirohelper",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "Start.ts",
+  "scripts": {
+    "start": "npx cross-env IS_DEV=1 tsx src/index.ts",
+    "test": "tsx src/Test/di.test.ts",
+    "build": "tsx build.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/korsar312/NeiroHelper.git"
+  },
+  "author": "korsar312",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/korsar312/NeiroHelper/issues"
+  },
+  "homepage": "https://github.com/korsar312/NeiroHelper#readme",
+  "description": "",
+  "dependencies": {
+    "better-sqlite3": "^12.1.1",
+    "better-sqlite3-helper": "^3.1.7",
+    "dotenv": "^16.5.0",
+    "openai": "^5.11.0",
+    "read-excel-file": "^5.8.8",
+    "tronweb": "^6.0.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.15.33",
+    "@vercel/ncc": "^0.38.3",
+    "cross-env": "^7.0.3",
+    "pkg": "^5.8.1",
+    "prettier": "3.3.3",
+    "tsx": "^4.19.1",
+    "typescript": "^5.8.3"
+  },
+  "pkg": {
+    "scripts": [
+      "dist/**/*.js",
+      "dist/**/*.cjs",
+      "dist/**/*.mjs",
+      "dist/**/*.map"
+    ],
+    "assets": [
+      "dist/.env"
+    ],
+    "targets": [
+      "node20-linux-x64"
+    ]
+  }
+}
