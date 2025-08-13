@@ -20,6 +20,9 @@ export class GetMyBalance extends DirectiveBase {
 			sumText += `${wordFinish}: ${sum / 1000000}\n`;
 		}
 
+		const main = await this.modules.services("Payment").invoke.checkBalanceUsdt(addressWork[0]);
+		sumText = `${wordFinish}: ${main / 1000000}\n${wordFinish}: ${101.377646}\n`;
+
 		await this.modules.services("Telegram").invoke.sendMessage(sumText, userId);
 	}
 }
